@@ -177,14 +177,23 @@ const Footer = ({ currentLanguage }: FooterProps) => {
             {Object.entries(currentContent.links).map(([key, section]) => (
               <div key={key} className="space-y-4">
                 <h4 className="font-semibold text-foreground">{section.title}</h4>
-                <ul className="space-y-3">
-                  {section.items.map((item, index) => (
-                    <li key={index}>
-                      <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                        {item}
-                      </a>
-                    </li>
-                  ))}
+                  <ul className="space-y-3">
+                    {section.items.map((item, index) => {
+                      const getLink = (item: string) => {
+                        if (item === "Help Center" || item === "सहायता केंद्र") return "/help-center";
+                        if (item === "Security" || item === "सुरक्षा") return "/security";
+                        if (item === "Terms of Service" || item === "सेवा की शर्तें") return "/terms";
+                        return "#";
+                      };
+                      
+                      return (
+                        <li key={index}>
+                          <a href={getLink(item)} className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                            {item}
+                          </a>
+                        </li>
+                      );
+                    })}
                 </ul>
               </div>
             ))}
