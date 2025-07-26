@@ -14,7 +14,309 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          achievement_description: string
+          achievement_title: string
+          achievement_type: string
+          badge_icon: string | null
+          earned_at: string
+          id: string
+          points_earned: number
+          user_id: string
+        }
+        Insert: {
+          achievement_description: string
+          achievement_title: string
+          achievement_type: string
+          badge_icon?: string | null
+          earned_at?: string
+          id?: string
+          points_earned?: number
+          user_id: string
+        }
+        Update: {
+          achievement_description?: string
+          achievement_title?: string
+          achievement_type?: string
+          badge_icon?: string | null
+          earned_at?: string
+          id?: string
+          points_earned?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      carbon_credits: {
+        Row: {
+          created_at: string
+          credits_balance: number
+          credits_earned: number
+          credits_redeemed: number
+          id: string
+          source_description: string | null
+          source_type: string
+          transaction_hash: string | null
+          user_id: string
+          verification_status: string | null
+        }
+        Insert: {
+          created_at?: string
+          credits_balance?: number
+          credits_earned?: number
+          credits_redeemed?: number
+          id?: string
+          source_description?: string | null
+          source_type: string
+          transaction_hash?: string | null
+          user_id: string
+          verification_status?: string | null
+        }
+        Update: {
+          created_at?: string
+          credits_balance?: number
+          credits_earned?: number
+          credits_redeemed?: number
+          id?: string
+          source_description?: string | null
+          source_type?: string
+          transaction_hash?: string | null
+          user_id?: string
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
+      esg_reports: {
+        Row: {
+          created_at: string
+          diversity_score: number | null
+          emissions_scope1: number | null
+          emissions_scope2: number | null
+          emissions_scope3: number | null
+          employee_count: number | null
+          energy_consumption: number | null
+          green_cibil_score: number | null
+          id: string
+          overall_esg_score: number | null
+          renewable_energy_percent: number | null
+          report_name: string
+          reporting_period: string
+          safety_incidents: number | null
+          status: string | null
+          updated_at: string
+          user_id: string
+          waste_generated: number | null
+          waste_recycled: number | null
+          water_consumption: number | null
+        }
+        Insert: {
+          created_at?: string
+          diversity_score?: number | null
+          emissions_scope1?: number | null
+          emissions_scope2?: number | null
+          emissions_scope3?: number | null
+          employee_count?: number | null
+          energy_consumption?: number | null
+          green_cibil_score?: number | null
+          id?: string
+          overall_esg_score?: number | null
+          renewable_energy_percent?: number | null
+          report_name: string
+          reporting_period: string
+          safety_incidents?: number | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+          waste_generated?: number | null
+          waste_recycled?: number | null
+          water_consumption?: number | null
+        }
+        Update: {
+          created_at?: string
+          diversity_score?: number | null
+          emissions_scope1?: number | null
+          emissions_scope2?: number | null
+          emissions_scope3?: number | null
+          employee_count?: number | null
+          energy_consumption?: number | null
+          green_cibil_score?: number | null
+          id?: string
+          overall_esg_score?: number | null
+          renewable_energy_percent?: number | null
+          report_name?: string
+          reporting_period?: string
+          safety_incidents?: number | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+          waste_generated?: number | null
+          waste_recycled?: number | null
+          water_consumption?: number | null
+        }
+        Relationships: []
+      }
+      ewaste_ledger: {
+        Row: {
+          carbon_credits_earned: number | null
+          created_at: string
+          id: string
+          pickup_date: string
+          record_hash: string
+          recycler_id: string
+          recycler_name: string
+          submission_id: string
+          user_id: string
+          verification_status: string | null
+          waste_type: string
+          weight_kg: number
+        }
+        Insert: {
+          carbon_credits_earned?: number | null
+          created_at?: string
+          id?: string
+          pickup_date: string
+          record_hash: string
+          recycler_id: string
+          recycler_name: string
+          submission_id: string
+          user_id: string
+          verification_status?: string | null
+          waste_type: string
+          weight_kg: number
+        }
+        Update: {
+          carbon_credits_earned?: number | null
+          created_at?: string
+          id?: string
+          pickup_date?: string
+          record_hash?: string
+          recycler_id?: string
+          recycler_name?: string
+          submission_id?: string
+          user_id?: string
+          verification_status?: string | null
+          waste_type?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
+      mandi_listings: {
+        Row: {
+          carbon_efficiency_score: number
+          certifications: string[] | null
+          created_at: string
+          delivery_time_days: number
+          description: string | null
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          location_city: string
+          location_state: string
+          manufacturer_id: string
+          minimum_order_quantity: number
+          price_per_unit: number
+          product_category: string
+          product_name: string
+          solar_powered: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          carbon_efficiency_score: number
+          certifications?: string[] | null
+          created_at?: string
+          delivery_time_days: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          location_city: string
+          location_state: string
+          manufacturer_id: string
+          minimum_order_quantity: number
+          price_per_unit: number
+          product_category: string
+          product_name: string
+          solar_powered?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          carbon_efficiency_score?: number
+          certifications?: string[] | null
+          created_at?: string
+          delivery_time_days?: number
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          location_city?: string
+          location_state?: string
+          manufacturer_id?: string
+          minimum_order_quantity?: number
+          price_per_unit?: number
+          product_category?: string
+          product_name?: string
+          solar_powered?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          city: string | null
+          company_name: string | null
+          contact_person: string | null
+          created_at: string
+          gst_number: string | null
+          id: string
+          onboarding_completed: boolean | null
+          phone: string | null
+          pincode: string | null
+          preferred_language: string | null
+          role: string
+          state: string | null
+          ui_theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          created_at?: string
+          gst_number?: string | null
+          id?: string
+          onboarding_completed?: boolean | null
+          phone?: string | null
+          pincode?: string | null
+          preferred_language?: string | null
+          role: string
+          state?: string | null
+          ui_theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          created_at?: string
+          gst_number?: string | null
+          id?: string
+          onboarding_completed?: boolean | null
+          phone?: string | null
+          pincode?: string | null
+          preferred_language?: string | null
+          role?: string
+          state?: string | null
+          ui_theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
