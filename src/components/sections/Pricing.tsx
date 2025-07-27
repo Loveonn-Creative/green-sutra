@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   CheckCircle, 
   Star,
@@ -185,9 +186,11 @@ const Pricing = ({ currentLanguage }: PricingProps) => {
               <p className="text-success-foreground/80">
                 {currentContent.trial.description}
               </p>
-              <Button variant="secondary" size="lg" className="bg-background text-foreground hover:bg-background/90">
-                {currentContent.trial.cta}
-                <ArrowRight className="h-5 w-5 ml-2" />
+              <Button variant="secondary" size="lg" className="bg-background text-foreground hover:bg-background/90" asChild>
+                <Link to="/auth?mode=trial">
+                  {currentContent.trial.cta}
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Link>
               </Button>
             </div>
           </Card>
@@ -249,9 +252,12 @@ const Pricing = ({ currentLanguage }: PricingProps) => {
                     variant={plan.popular ? "hero" : "outline"} 
                     size="lg" 
                     className="w-full"
+                    asChild
                   >
-                    {plan.cta}
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <Link to={`/auth?plan=${plan.name.toLowerCase()}`}>
+                      {plan.cta}
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
                   </Button>
                 </div>
               </Card>
@@ -285,9 +291,11 @@ const Pricing = ({ currentLanguage }: PricingProps) => {
                 ))}
               </div>
 
-              <Button variant="secondary" size="xl" className="bg-background text-foreground hover:bg-background/90">
-                {currentContent.enterprise.cta}
-                <ArrowRight className="h-5 w-5 ml-2" />
+              <Button variant="secondary" size="xl" className="bg-background text-foreground hover:bg-background/90" asChild>
+                <Link to="/contact?inquiry=sales">
+                  {currentContent.enterprise.cta}
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Link>
               </Button>
             </div>
           </Card>

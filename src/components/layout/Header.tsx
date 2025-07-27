@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,13 +24,13 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
           <img 
             src="/lovable-uploads/f1eac384-0cb5-42a5-9e59-cfb84d48e1ef.png" 
             alt="Biocog Logo" 
             className="h-8 w-auto"
           />
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
@@ -42,12 +43,15 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
           <a href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Pricing
           </a>
-          <a href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             About
-          </a>
-          <a href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Blog
-          </a>
+          </Link>
+          <Link to="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Contact
+          </Link>
         </nav>
 
         {/* Desktop CTA & Language */}
@@ -73,10 +77,10 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
             </div>
           </div>
           <Button variant="outline" size="sm" asChild>
-            <a href="/auth">Sign In</a>
+            <Link to="/auth">Sign In</Link>
           </Button>
           <Button variant="hero" size="sm" asChild>
-            <a href="/auth">Get Started</a>
+            <Link to="/auth">Get Started</Link>
           </Button>
         </div>
 
@@ -103,12 +107,15 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
               <a href="/#pricing" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 Pricing
               </a>
-              <a href="/about" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              <Link to="/about" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 About
-              </a>
-              <a href="/blog" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              </Link>
+              <Link to="/blog" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 Blog
-              </a>
+              </Link>
+              <Link to="/contact" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+                Contact
+              </Link>
             </nav>
             <div className="pt-4 border-t border-border space-y-3">
               <div className="space-y-2">
@@ -132,10 +139,10 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
               </div>
               <div className="space-y-2">
                 <Button variant="outline" size="mobile" className="w-full" asChild>
-                  <a href="/auth">Sign In</a>
+                  <Link to="/auth">Sign In</Link>
                 </Button>
                 <Button variant="hero" size="mobile" className="w-full" asChild>
-                  <a href="/auth">Get Started</a>
+                  <Link to="/auth">Get Started</Link>
                 </Button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { ArrowRight, Zap, Shield, Leaf, TrendingUp } from "lucide-react";
 
 interface HeroProps {
@@ -77,13 +78,13 @@ const Hero = ({ currentLanguage }: HeroProps) => {
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
             <Button variant="hero" size="xl" className="group" asChild>
-              <a href="/auth">
+              <Link to="/auth">
                 {currentContent.cta}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </a>
+              </Link>
             </Button>
             <Button variant="outline" size="xl" asChild>
-              <a href="/voice-demo">{currentContent.tryDemo}</a>
+              <Link to="/voice-demo">{currentContent.tryDemo}</Link>
             </Button>
           </div>
 

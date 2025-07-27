@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   Leaf, 
   Bot, 
@@ -204,9 +205,16 @@ const Features = ({ currentLanguage }: FeaturesProps) => {
                   <Button 
                     variant="outline" 
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    asChild
                   >
-                    Learn More
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <Link to={
+                      index === 0 ? "/scan-invoice" : 
+                      index === 1 ? "/voice-demo" : 
+                      "/ewaste-recycling"
+                    }>
+                      Learn More
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
                   </Button>
                 </div>
               </Card>
