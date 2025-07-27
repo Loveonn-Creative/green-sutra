@@ -33,14 +33,20 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <a href="/#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
-          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <a href="/#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             How It Works
           </a>
-          <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <a href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Pricing
+          </a>
+          <a href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            About
+          </a>
+          <a href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Blog
           </a>
         </nav>
 
@@ -88,14 +94,20 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
         <div className="md:hidden bg-background border-t border-border">
           <div className="px-4 py-4 space-y-4">
             <nav className="space-y-3">
-              <a href="#features" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              <a href="/#features" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 Features
               </a>
-              <a href="#how-it-works" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              <a href="/#how-it-works" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 How It Works
               </a>
-              <a href="#pricing" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+              <a href="/#pricing" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
                 Pricing
+              </a>
+              <a href="/about" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+                About
+              </a>
+              <a href="/blog" className="block text-sm font-medium text-muted-foreground hover:text-foreground">
+                Blog
               </a>
             </nav>
             <div className="pt-4 border-t border-border space-y-3">

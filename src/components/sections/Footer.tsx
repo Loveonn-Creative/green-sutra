@@ -104,9 +104,11 @@ const Footer = ({ currentLanguage }: FooterProps) => {
                 {currentContent.cta.subtitle}
               </p>
             </div>
-            <Button variant="hero" size="xl" className="group">
-              {currentContent.cta.button}
-              <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
+            <Button variant="hero" size="xl" className="group" asChild>
+              <a href="/auth">
+                {currentContent.cta.button}
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
+              </a>
             </Button>
           </div>
         </div>
@@ -180,9 +182,34 @@ const Footer = ({ currentLanguage }: FooterProps) => {
                   <ul className="space-y-3">
                     {section.items.map((item, index) => {
                       const getLink = (item: string) => {
+                        // Product links
+                        if (item === "Features" || item === "सुविधाएं") return "/#features";
+                        if (item === "How it Works" || item === "यह कैसे काम करता है") return "/#how-it-works";
+                        if (item === "Pricing" || item === "मूल्य निर्धारण") return "/#pricing";
+                        if (item === "API Documentation" || item === "API डॉक्यूमेंटेशन") return "/api-docs";
+                        if (item === "Mobile App" || item === "मोबाइल ऐप") return "/mobile";
+                        
+                        // Company links
+                        if (item === "About Us" || item === "हमारे बारे में") return "/about";
+                        if (item === "Careers" || item === "करियर") return "/careers";
+                        if (item === "Press" || item === "प्रेस") return "/press";
+                        if (item === "Partners" || item === "पार्टनर्स") return "/partners";
+                        if (item === "Blog" || item === "ब्लॉग") return "/blog";
+                        
+                        // Support links
                         if (item === "Help Center" || item === "सहायता केंद्र") return "/help-center";
-                        if (item === "Security" || item === "सुरक्षा") return "/security";
+                        if (item === "Contact" || item === "संपर्क") return "/contact";
+                        if (item === "Privacy Policy" || item === "गोपनीयता नीति") return "/privacy";
                         if (item === "Terms of Service" || item === "सेवा की शर्तें") return "/terms";
+                        if (item === "Security" || item === "सुरक्षा") return "/security";
+                        
+                        // Solutions links
+                        if (item === "For Traders" || item === "व्यापारियों के लिए") return "/trader-dashboard";
+                        if (item === "For Manufacturers" || item === "निर्माताओं के लिए") return "/manufacturer-dashboard";
+                        if (item === "Enterprise" || item === "एंटरप्राइज़") return "/enterprise";
+                        if (item === "Government" || item === "सरकार") return "/government";
+                        if (item === "Recyclers" || item === "रीसाइक्लर") return "/recyclers";
+                        
                         return "#";
                       };
                       

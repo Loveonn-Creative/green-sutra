@@ -22,6 +22,11 @@ import TraderDashboard from "./pages/TraderDashboard";
 import ManufacturerDashboard from "./pages/ManufacturerDashboard";
 import AIMandi from "./pages/AIMandi";
 import Credits from "./pages/Credits";
+import About from "./pages/About";
+import Careers from "./pages/Careers";
+import Contact from "./pages/Contact";
+import Blog from "./pages/Blog";
+import Partners from "./pages/Partners";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +55,11 @@ const App = () => (
               <Route path="/carbon-tracker" element={<CarbonTracker />} />
               <Route path="/ewaste-recycling" element={<EWasteRecycling />} />
               <Route path="/scan-invoice" element={<ScanInvoice />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/partners" element={<Partners />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
