@@ -35,7 +35,7 @@ const Features = ({ currentLanguage }: FeaturesProps) => {
           color: "success"
         },
         {
-          name: "FinLync AI Assistant", 
+          name: "Biocog AI Assistant", 
           description: "Real-time AI chatbot guides on tax, loans, compliance with vernacular support",
           features: [
             "Multilingual AI support (5+ languages)",
@@ -99,7 +99,7 @@ const Features = ({ currentLanguage }: FeaturesProps) => {
           color: "success"
         },
         {
-          name: "FinLync AI सहायक",
+          name: "Biocog AI सहायक",
           description: "रीयल-टाइम AI चैटबॉट कर, ऋण, अनुपालन पर मार्गदर्शन करता है",
           features: [
             "बहुभाषी AI समर्थन (5+ भाषाएं)",

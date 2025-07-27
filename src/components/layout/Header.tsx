@@ -66,11 +66,11 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
               ))}
             </div>
           </div>
-          <Button variant="outline" size="sm">
-            Sign In
+          <Button variant="outline" size="sm" asChild>
+            <a href="/auth">Sign In</a>
           </Button>
-          <Button variant="hero" size="sm">
-            Get Started
+          <Button variant="hero" size="sm" asChild>
+            <a href="/auth">Get Started</a>
           </Button>
         </div>
 
@@ -119,11 +119,11 @@ const Header = ({ currentLanguage, onLanguageChange }: HeaderProps) => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Button variant="outline" size="mobile" className="w-full">
-                  Sign In
+                <Button variant="outline" size="mobile" className="w-full" asChild>
+                  <a href="/auth">Sign In</a>
                 </Button>
-                <Button variant="hero" size="mobile" className="w-full">
-                  Get Started
+                <Button variant="hero" size="mobile" className="w-full" asChild>
+                  <a href="/auth">Get Started</a>
                 </Button>
               </div>
             </div>

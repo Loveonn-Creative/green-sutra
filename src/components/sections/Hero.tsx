@@ -76,12 +76,14 @@ const Hero = ({ currentLanguage }: HeroProps) => {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-            <Button variant="hero" size="xl" className="group">
-              {currentContent.cta}
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <Button variant="hero" size="xl" className="group" asChild>
+              <a href="/auth">
+                {currentContent.cta}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </a>
             </Button>
-            <Button variant="outline" size="xl">
-              {currentContent.tryDemo}
+            <Button variant="outline" size="xl" asChild>
+              <a href="/voice-demo">{currentContent.tryDemo}</a>
             </Button>
           </div>
 
