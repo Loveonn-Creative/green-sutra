@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   Mail, 
@@ -105,10 +106,10 @@ const Footer = ({ currentLanguage }: FooterProps) => {
               </p>
             </div>
             <Button variant="hero" size="xl" className="group" asChild>
-              <a href="/auth">
+              <Link to="/auth">
                 {currentContent.cta.button}
                 <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
-              </a>
+              </Link>
             </Button>
           </div>
         </div>
@@ -162,13 +163,13 @@ const Footer = ({ currentLanguage }: FooterProps) => {
 
             {/* Social Links */}
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+              <a href="https://twitter.com/biocog_ai" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+              <a href="https://linkedin.com/company/biocog" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
                 <Linkedin className="h-4 w-4" />
               </a>
-              <a href="#" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+              <a href="https://instagram.com/biocog_ai" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-accent rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
                 <Instagram className="h-4 w-4" />
               </a>
             </div>
@@ -213,11 +214,18 @@ const Footer = ({ currentLanguage }: FooterProps) => {
                         return "#";
                       };
                       
+                      const linkPath = getLink(item);
                       return (
                         <li key={index}>
-                          <a href={getLink(item)} className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                            {item}
-                          </a>
+                          {linkPath.startsWith('#') ? (
+                            <a href={linkPath} className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                              {item}
+                            </a>
+                          ) : (
+                            <Link to={linkPath} className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                              {item}
+                            </Link>
+                          )}
                         </li>
                       );
                     })}

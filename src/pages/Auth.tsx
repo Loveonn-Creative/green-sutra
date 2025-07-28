@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn, signUp, user } = useAuth();
   const { createProfile } = useProfile();
   const { translations } = useTheme();
@@ -25,39 +26,113 @@ const Auth = () => {
     companyName: ''
   });
 
+  // Handle URL parameters for trial mode, plan selection, etc.
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    const plan = searchParams.get('plan');
+    const role = searchParams.get('role');
+    
+    if (role && (role === 'trader' || role === 'manufacturer')) {
+      setFormData(prev => ({ ...prev, role }));
+    }
+  }, [searchParams]);
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
   const handleSubmit = async (type: 'signin' | 'signup') => {
+    // Validation
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (type === 'signup' && !formData.companyName.trim()) {
+      toast.error('Company name is required');
+      return;
+    }
+
     setLoading(true);
     try {
       if (type === 'signin') {
         const { error } = await signIn(formData.email, formData.password);
         if (error) {
-          toast.error(error.message);
+          if (error.message.includes('Invalid login credentials')) {
+            toast.error('Invalid email or password. Please check your credentials.');
+          } else if (error.message.includes('Email not confirmed')) {
+            toast.error('Please check your email and click the confirmation link.');
+          } else {
+            toast.error(error.message);
+          }
         } else {
           toast.success('Successfully signed in!');
-          navigate('/');
+          // Navigate based on role
+          const mode = searchParams.get('mode');
+          if (mode === 'trial') {
+            navigate('/trial');
+          } else {
+            navigate('/');
+          }
         }
       } else {
         const { error } = await signUp(formData.email, formData.password, formData.role);
         if (error) {
-          toast.error(error.message);
+          if (error.message.includes('already registered')) {
+            toast.error('This email is already registered. Please sign in instead.');
+          } else if (error.message.includes('Password should be at least 6 characters')) {
+            toast.error('Password must be at least 6 characters long');
+          } else {
+            toast.error(error.message);
+          }
         } else {
           // Create profile after successful signup
           setTimeout(async () => {
-            await createProfile({
-              role: formData.role,
-              company_name: formData.companyName,
-              onboarding_completed: false,
-              ui_theme: 'suit',
-              preferred_language: 'en'
-            });
+            try {
+              await createProfile({
+                role: formData.role,
+                company_name: formData.companyName,
+                onboarding_completed: false,
+                ui_theme: 'suit',
+                preferred_language: 'en'
+              });
+            } catch (profileError) {
+              console.error('Profile creation error:', profileError);
+            }
           }, 1000);
           
-          toast.success('Account created! Please check your email to verify your account.');
-          navigate('/');
+          toast.success('Account created successfully! Please check your email to verify your account.');
+          
+          // Navigate based on URL parameters
+          const mode = searchParams.get('mode');
+          const plan = searchParams.get('plan');
+          
+          if (mode === 'trial') {
+            navigate('/trial');
+          } else if (plan) {
+            navigate(`/trial?plan=${plan}`);
+          } else {
+            navigate('/');
+          }
         }
       }
     } catch (error: any) {
-      toast.error(error.message || 'An error occurred');
+      toast.error(error.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }

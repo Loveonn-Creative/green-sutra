@@ -29,6 +29,13 @@ import Blog from "./pages/Blog";
 import Partners from "./pages/Partners";
 import Demo from "./pages/Demo";
 import Trial from "./pages/Trial";
+import Privacy from "./pages/Privacy";
+import Enterprise from "./pages/Enterprise";
+import Government from "./pages/Government";
+import Recyclers from "./pages/Recyclers";
+import ApiDocs from "./pages/ApiDocs";
+import Mobile from "./pages/Mobile";
+import Press from "./pages/Press";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +71,13 @@ const App = () => (
               <Route path="/partners" element={<Partners />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/trial" element={<Trial />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/enterprise" element={<Enterprise />} />
+              <Route path="/government" element={<Government />} />
+              <Route path="/recyclers" element={<Recyclers />} />
+              <Route path="/api-docs" element={<ApiDocs />} />
+              <Route path="/mobile" element={<Mobile />} />
+              <Route path="/press" element={<Press />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

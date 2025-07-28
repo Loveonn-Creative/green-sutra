@@ -4,9 +4,29 @@ import Footer from "@/components/sections/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Recycle, MapPin, Calendar, Gift } from "lucide-react";
+import EWasteModal from "@/components/e-waste/EWasteModal";
+import { toast } from "sonner";
 
 const EWasteRecycling = () => {
   const [currentLanguage, setCurrentLanguage] = useState("en");
+
+  const handleFindRecyclers = () => {
+    toast.info("Finding recyclers near you...", {
+      description: "We'll match you with verified recyclers in your area"
+    });
+  };
+
+  const handleSchedulePickup = () => {
+    toast.info("Opening schedule picker...", {
+      description: "Choose a convenient time for e-waste pickup"
+    });
+  };
+
+  const handleViewRewards = () => {
+    toast.success("Current rewards: 150 carbon credits!", {
+      description: "Keep recycling to earn more credits"
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,7 +49,10 @@ const EWasteRecycling = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">Add your electronic waste items</p>
-                <Button className="w-full">Add Items</Button>
+                <EWasteModal 
+                  trigger={<Button className="w-full">Add Items</Button>}
+                  onSubmit={(items) => console.log('Submitted items:', items)}
+                />
               </CardContent>
             </Card>
 
@@ -42,7 +65,7 @@ const EWasteRecycling = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">Match with local verified recyclers</p>
-                <Button variant="outline" className="w-full">Find Near Me</Button>
+                <Button variant="outline" className="w-full" onClick={handleFindRecyclers}>Find Near Me</Button>
               </CardContent>
             </Card>
 
@@ -55,7 +78,7 @@ const EWasteRecycling = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">Book convenient pickup slots</p>
-                <Button variant="secondary" className="w-full">Schedule</Button>
+                <Button variant="secondary" className="w-full" onClick={handleSchedulePickup}>Schedule</Button>
               </CardContent>
             </Card>
 
@@ -68,7 +91,7 @@ const EWasteRecycling = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">Monitor your recycling rewards</p>
-                <Button variant="outline" className="w-full">View Rewards</Button>
+                <Button variant="outline" className="w-full" onClick={handleViewRewards}>View Rewards</Button>
               </CardContent>
             </Card>
           </div>
