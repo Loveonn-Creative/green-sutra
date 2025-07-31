@@ -53,7 +53,7 @@ const TraderDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentLanguage={language} onLanguageChange={setLanguage} />
+      <Header currentLanguage={language} onLanguageChange={setLanguage} showDashboardNav={true} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">

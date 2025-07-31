@@ -1,311 +1,292 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Search, 
-  Filter, 
-  MapPin, 
-  Zap, 
-  Leaf, 
-  Clock,
-  Star,
-  MessageCircle
-} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { Search, Filter, MapPin, Star, Factory, Phone, Mail } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import { toast } from 'sonner';
+
+interface MandiListing {
+  id: string;
+  product_name: string;
+  product_category: string;
+  description: string;
+  price_per_unit: number;
+  minimum_order_quantity: number;
+  delivery_time_days: number;
+  carbon_efficiency_score: number;
+  location_city: string;
+  location_state: string;
+  solar_powered: boolean;
+  certifications: string[];
+  images: string[];
+  manufacturer_id: string;
+  is_active: boolean;
+  created_at: string;
+}
 
 const AIMandi = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { language, setLanguage, translations } = useTheme();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedLocation, setSelectedLocation] = useState('all');
+  const { profile } = useProfile();
+  const { language, setLanguage } = useTheme();
+  const [listings, setListings] = useState<MandiListing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
 
-  // Mock marketplace data
-  const suppliers = [
-    {
-      id: 1,
-      name: 'GreenTech Solutions Pvt Ltd',
-      location: 'Mumbai, Maharashtra',
-      category: 'Electronics Manufacturing',
-      carbonScore: 95,
-      solarPowered: true,
-      rating: 4.8,
-      reviews: 127,
-      products: ['Solar Inverters', 'LED Panels', 'Battery Systems'],
-      priceRange: '₹50,000 - ₹5,00,000',
-      deliveryTime: '7-14 days',
-      minOrder: '10 units',
-      certifications: ['ISO 14001', 'Energy Star', 'BIS'],
-      description: 'Leading manufacturer of renewable energy products with 100% solar-powered facilities.'
-    },
-    {
-      id: 2,
-      name: 'Eco Textiles & Co',
-      location: 'Coimbatore, Tamil Nadu',
-      category: 'Textile Manufacturing',
-      carbonScore: 88,
-      solarPowered: true,
-      rating: 4.6,
-      reviews: 89,
-      products: ['Organic Cotton Fabrics', 'Bamboo Textiles', 'Recycled Polyester'],
-      priceRange: '₹200 - ₹2,000 per meter',
-      deliveryTime: '5-10 days',
-      minOrder: '100 meters',
-      certifications: ['GOTS', 'OEKO-TEX', 'Cradle to Cradle'],
-      description: 'Sustainable textile manufacturer using organic materials and renewable energy.'
-    },
-    {
-      id: 3,
-      name: 'Clean Energy Components',
-      location: 'Pune, Maharashtra',
-      category: 'Automotive Parts',
-      carbonScore: 92,
-      solarPowered: false,
-      rating: 4.7,
-      reviews: 156,
-      products: ['Electric Vehicle Components', 'Battery Casings', 'Charging Systems'],
-      priceRange: '₹5,000 - ₹50,000',
-      deliveryTime: '10-21 days',
-      minOrder: '5 units',
-      certifications: ['TS 16949', 'ISO 14001', 'IATF'],
-      description: 'Specialized in sustainable automotive components for electric vehicles.'
-    },
-    {
-      id: 4,
-      name: 'Sustainable Packaging Solutions',
-      location: 'Bangalore, Karnataka',
-      category: 'Packaging',
-      carbonScore: 89,
-      solarPowered: true,
-      rating: 4.5,
-      reviews: 203,
-      products: ['Biodegradable Packaging', 'Recycled Cardboard', 'Compostable Films'],
-      priceRange: '₹10 - ₹500 per unit',
-      deliveryTime: '3-7 days',
-      minOrder: '1000 units',
-      certifications: ['FSC', 'BPI Compostable', 'ISO 14001'],
-      description: 'Eco-friendly packaging solutions made from renewable and recycled materials.'
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
     }
-  ];
+    fetchListings();
+  }, [user, navigate]);
 
-  const categories = [
-    'Electronics Manufacturing',
-    'Textile Manufacturing',
-    'Automotive Parts',
-    'Packaging',
-    'Food Processing',
-    'Chemical & Pharma'
-  ];
+  const fetchListings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('mandi_listings')
+        .select('*')
+        .eq('is_active', true)
+        .order('carbon_efficiency_score', { ascending: false });
 
-  const locations = [
-    'Mumbai, Maharashtra',
-    'Bangalore, Karnataka',
-    'Pune, Maharashtra',
-    'Chennai, Tamil Nadu',
-    'Coimbatore, Tamil Nadu',
-    'Ahmedabad, Gujarat'
-  ];
+      if (error) {
+        console.error('Error fetching listings:', error);
+        toast.error('Failed to load marketplace listings');
+        return;
+      }
 
-  const filteredSuppliers = suppliers.filter(supplier => {
-    const matchesSearch = supplier.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         supplier.products.some(product => product.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || supplier.category === selectedCategory;
-    const matchesLocation = selectedLocation === 'all' || supplier.location === selectedLocation;
+      setListings(data || []);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+      toast.error('Failed to load marketplace listings');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredListings = listings.filter(listing => {
+    const matchesSearch = listing.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         listing.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || listing.product_category === categoryFilter;
+    const matchesLocation = locationFilter === 'all' || listing.location_state === locationFilter;
     
     return matchesSearch && matchesCategory && matchesLocation;
   });
 
+  const categories = [...new Set(listings.map(l => l.product_category))];
+  const states = [...new Set(listings.map(l => l.location_state))];
+
   if (!user) {
-    navigate('/auth');
     return null;
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentLanguage={language} onLanguageChange={setLanguage} />
+      <Header currentLanguage={language} onLanguageChange={setLanguage} showDashboardNav={true} />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">AI Mandi Marketplace</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Connect with verified green manufacturers and suppliers. AI-powered matching based on 
-            carbon efficiency, location, and your business requirements.
-          </p>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">
+              AI Mandi
+            </h1>
+            <p className="text-muted-foreground">
+              Discover sustainable products from verified green manufacturers
+            </p>
+          </div>
+          {profile?.role === 'manufacturer' && (
+            <Button onClick={() => navigate('/manufacturer-dashboard')}>
+              <Factory className="h-4 w-4 mr-2" />
+              Manage Listings
+            </Button>
+          )}
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-card rounded-lg p-6 mb-8 shadow-subtle">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="md:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search suppliers or products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-              <SelectTrigger>
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {locations.map(location => (
-                  <SelectItem key={location} value={location}>{location}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              More Filters
-            </Button>
           </div>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category} value={category}>{category}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={locationFilter} onValueChange={setLocationFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Locations" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All States</SelectItem>
+              {states.map(state => (
+                <SelectItem key={state} value={state}>{state}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Results Summary */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="text-sm text-muted-foreground">
-            Found {filteredSuppliers.length} suppliers matching your criteria
-          </div>
-          <div className="flex gap-2">
-            <Badge variant="outline">AI Matched</Badge>
-            <Badge variant="outline">Verified Green</Badge>
-          </div>
-        </div>
-
-        {/* Supplier Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredSuppliers.map(supplier => (
-            <Card key={supplier.id} className="hover:shadow-medium transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{supplier.name}</CardTitle>
-                    <CardDescription className="flex items-center mt-1">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {supplier.location}
-                    </CardDescription>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge variant={supplier.carbonScore >= 90 ? 'default' : 'secondary'}>
-                      {supplier.carbonScore}% Green
-                    </Badge>
-                    {supplier.solarPowered && (
-                      <Badge variant="outline" className="text-warning">
-                        <Zap className="h-3 w-3 mr-1" />
-                        Solar Powered
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">{supplier.description}</p>
-                
-                <div>
-                  <div className="text-sm font-medium mb-2">Products & Services:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {supplier.products.map(product => (
-                      <Badge key={product} variant="outline" className="text-xs">
-                        {product}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Price Range:</span>
-                    <div className="font-medium">{supplier.priceRange}</div>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Delivery:</span>
-                    <div className="font-medium flex items-center">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {supplier.deliveryTime}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Min Order:</span>
-                    <div className="font-medium">{supplier.minOrder}</div>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Rating:</span>
-                    <div className="font-medium flex items-center">
-                      <Star className="h-3 w-3 mr-1 fill-warning text-warning" />
-                      {supplier.rating} ({supplier.reviews})
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Certifications:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {supplier.certifications.map(cert => (
-                      <Badge key={cert} variant="secondary" className="text-xs">
-                        {cert}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" className="flex-1">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Contact
-                  </Button>
-                  <Button className="flex-1">
-                    Connect & Quote
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredSuppliers.length === 0 && (
+        {/* Listings Grid */}
+        {loading ? (
           <div className="text-center py-12">
-            <Leaf className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No suppliers found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search criteria or browse all categories
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="mt-2 text-muted-foreground">Loading marketplace...</p>
+          </div>
+        ) : filteredListings.length === 0 ? (
+          <div className="text-center py-12">
+            <Factory className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-medium mb-2">No Products Found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || categoryFilter !== 'all' || locationFilter !== 'all' 
+                ? "Try adjusting your search filters"
+                : "No products are currently listed in the marketplace"
+              }
             </p>
+            {(searchTerm || categoryFilter !== 'all' || locationFilter !== 'all') && (
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setSearchTerm('');
+                  setCategoryFilter('all');
+                  setLocationFilter('all');
+                }}
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredListings.map((listing) => (
+              <Card key={listing.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg mb-2">{listing.product_name}</CardTitle>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary">{listing.product_category}</Badge>
+                        {listing.solar_powered && (
+                          <Badge variant="default" className="bg-yellow-500">☀️ Solar</Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">{listing.carbon_efficiency_score}%</span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {listing.description}
+                  </p>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Price:</span>
+                      <span className="font-medium">₹{listing.price_per_unit.toLocaleString()}/unit</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Min Order:</span>
+                      <span>{listing.minimum_order_quantity} units</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Delivery:</span>
+                      <span>{listing.delivery_time_days} days</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <MapPin className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">{listing.location_city}, {listing.location_state}</span>
+                    </div>
+                  </div>
+
+                  {listing.certifications && listing.certifications.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-1">
+                        {listing.certifications.slice(0, 3).map((cert, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {cert}
+                          </Badge>
+                        ))}
+                        {listing.certifications.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{listing.certifications.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button size="sm" className="flex-1">
+                      Contact Supplier
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
-        {/* Call to Action for Manufacturers */}
-        <Card className="mt-12 bg-gradient-primary text-primary-foreground">
-          <CardContent className="p-8 text-center">
-            <h3 className="text-2xl font-bold mb-4">Are you a Green Manufacturer?</h3>
-            <p className="mb-6 opacity-90">
-              Join AI Mandi and connect with traders looking for sustainable products. 
-              Showcase your carbon efficiency and grow your business.
-            </p>
-            <Button variant="secondary" size="lg">
-              List Your Products
-            </Button>
-          </CardContent>
-        </Card>
+        {/* AI Recommendations */}
+        {filteredListings.length > 0 && (
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>AI Recommendations</CardTitle>
+              <CardDescription>
+                Based on your business profile and sustainability goals
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-muted rounded-lg">
+                  <h4 className="font-medium mb-2">🌱 Best Carbon Score</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Products with highest carbon efficiency ratings
+                  </p>
+                </div>
+                <div className="p-4 bg-muted rounded-lg">
+                  <h4 className="font-medium mb-2">📍 Local Suppliers</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Reduce transportation emissions with nearby suppliers
+                  </p>
+                </div>
+                <div className="p-4 bg-muted rounded-lg">
+                  <h4 className="font-medium mb-2">⚡ Solar Powered</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Products from renewable energy facilities
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

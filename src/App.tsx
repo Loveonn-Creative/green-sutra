@@ -38,6 +38,7 @@ import Mobile from "./pages/Mobile";
 import Press from "./pages/Press";
 import Dashboard from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
+import AuthGuard from "./components/auth/AuthGuard";
 
 const queryClient = new QueryClient();
 
@@ -52,21 +53,61 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/esg-evaluation" element={<ESGEvaluation />} />
-              <Route path="/trader-dashboard" element={<TraderDashboard />} />
-              <Route path="/manufacturer-dashboard" element={<ManufacturerDashboard />} />
-              <Route path="/ai-mandi" element={<AIMandi />} />
-              <Route path="/credits" element={<Credits />} />
+              <Route path="/esg-evaluation" element={
+                <AuthGuard>
+                  <ESGEvaluation />
+                </AuthGuard>
+              } />
+              <Route path="/trader-dashboard" element={
+                <AuthGuard requireRole="trader">
+                  <TraderDashboard />
+                </AuthGuard>
+              } />
+              <Route path="/manufacturer-dashboard" element={
+                <AuthGuard requireRole="manufacturer">
+                  <ManufacturerDashboard />
+                </AuthGuard>
+              } />
+              <Route path="/ai-mandi" element={
+                <AuthGuard>
+                  <AIMandi />
+                </AuthGuard>
+              } />
+              <Route path="/credits" element={
+                <AuthGuard>
+                  <Credits />
+                </AuthGuard>
+              } />
+              <Route path="/account-settings" element={
+                <AuthGuard>
+                  <AccountSettings />
+                </AuthGuard>
+              } />
+              <Route path="/onboarding-trader" element={
+                <AuthGuard requireRole="trader" requireOnboarding={false}>
+                  <OnboardingTrader />
+                </AuthGuard>
+              } />
+              <Route path="/onboarding-manufacturer" element={
+                <AuthGuard requireRole="manufacturer" requireOnboarding={false}>
+                  <OnboardingManufacturer />
+                </AuthGuard>
+              } />
+              <Route path="/carbon-tracker" element={
+                <AuthGuard>
+                  <CarbonTracker />
+                </AuthGuard>
+              } />
+              <Route path="/ewaste-recycling" element={
+                <AuthGuard>
+                  <EWasteRecycling />
+                </AuthGuard>
+              } />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/security" element={<Security />} />
               <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/account-settings" element={<AccountSettings />} />
-              <Route path="/onboarding-trader" element={<OnboardingTrader />} />
-              <Route path="/onboarding-manufacturer" element={<OnboardingManufacturer />} />
               <Route path="/voice-demo" element={<VoiceDemo />} />
-              <Route path="/carbon-tracker" element={<CarbonTracker />} />
-              <Route path="/ewaste-recycling" element={<EWasteRecycling />} />
               <Route path="/scan-invoice" element={<ScanInvoice />} />
               <Route path="/about" element={<About />} />
               <Route path="/careers" element={<Careers />} />

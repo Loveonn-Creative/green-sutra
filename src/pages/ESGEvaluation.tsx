@@ -84,7 +84,7 @@ const ESGEvaluation = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentLanguage={language} onLanguageChange={setLanguage} />
+      <Header currentLanguage={language} onLanguageChange={setLanguage} showDashboardNav={true} />
       
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
