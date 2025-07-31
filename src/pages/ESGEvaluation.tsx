@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/contexts/ThemeContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Leaf, TrendingUp, Users, Shield } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/sections/Footer';
 
 const ESGEvaluation = () => {
   const navigate = useNavigate();
@@ -68,13 +71,48 @@ const ESGEvaluation = () => {
   };
 
   const handleSubmit = async () => {
-    // Calculate scores first
-    calculateESGScore();
+    if (!user) return;
     
-    // Here you would typically save to Supabase
-    // For now, just show success and redirect
-    alert('ESG Report submitted successfully!');
-    navigate('/trader-dashboard');
+    try {
+      // Calculate scores first
+      calculateESGScore();
+      
+      // Save to Supabase
+      const { error } = await supabase
+        .from('esg_reports')
+        .insert([{
+          user_id: user.id,
+          report_name: esgData.report_name || `ESG Report ${new Date().getFullYear()}`,
+          reporting_period: esgData.reporting_period,
+          emissions_scope1: parseFloat(esgData.emissions_scope1) || 0,
+          emissions_scope2: parseFloat(esgData.emissions_scope2) || 0,
+          emissions_scope3: parseFloat(esgData.emissions_scope3) || 0,
+          waste_generated: parseFloat(esgData.waste_generated) || 0,
+          waste_recycled: parseFloat(esgData.waste_recycled) || 0,
+          water_consumption: parseFloat(esgData.water_consumption) || 0,
+          energy_consumption: parseFloat(esgData.energy_consumption) || 0,
+          renewable_energy_percent: parseFloat(esgData.renewable_energy_percent) || 0,
+          employee_count: parseInt(esgData.employee_count) || 0,
+          safety_incidents: parseInt(esgData.safety_incidents) || 0,
+          diversity_score: parseFloat(esgData.diversity_score) || 0,
+          overall_esg_score: scores.overall,
+          green_cibil_score: Math.round(scores.overall * 8.5), // Convert to Green CIBIL scale
+          status: 'submitted'
+        }]);
+
+      if (error) throw error;
+
+      toast.success('ESG Report submitted successfully!', {
+        description: 'Your report has been saved and will be processed for scoring.'
+      });
+      
+      navigate('/trader-dashboard');
+    } catch (error) {
+      console.error('Error submitting ESG report:', error);
+      toast.error('Failed to submit ESG report', {
+        description: 'Please try again or contact support if the issue persists.'
+      });
+    }
   };
 
   if (!user) {
@@ -310,6 +348,8 @@ const ESGEvaluation = () => {
           </Button>
         </div>
       </div>
+      
+      <Footer currentLanguage={language} />
     </div>
   );
 };

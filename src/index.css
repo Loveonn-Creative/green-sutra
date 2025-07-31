@@ -48,6 +48,11 @@
     --warning-light: 45 93% 85%;
     --warning-foreground: 45 30% 11%;
 
+    /* Mobile optimizations */
+    --mobile-padding: 0.75rem;
+    --mobile-text: 0.875rem;
+    --mobile-heading: 1.5rem;
+
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;

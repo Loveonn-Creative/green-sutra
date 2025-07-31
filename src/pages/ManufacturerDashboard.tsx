@@ -17,6 +17,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/sections/Footer';
 
 const ManufacturerDashboard = () => {
   const navigate = useNavigate();
@@ -283,6 +284,8 @@ const ManufacturerDashboard = () => {
           </Button>
         </div>
       </div>
+      
+      <Footer currentLanguage={language} />
     </div>
   );
 };

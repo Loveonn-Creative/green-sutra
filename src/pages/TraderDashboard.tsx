@@ -17,6 +17,7 @@ import {
   Filter
 } from 'lucide-react';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/sections/Footer';
 
 const TraderDashboard = () => {
   const navigate = useNavigate();
@@ -224,6 +225,8 @@ const TraderDashboard = () => {
           </Card>
         </div>
       </div>
+      
+      <Footer currentLanguage={language} />
     </div>
   );
 };
