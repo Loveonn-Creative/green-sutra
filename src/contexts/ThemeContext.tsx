@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useProfile } from '@/hooks/useProfile';
 
 type Theme = 'sari' | 'suit';
 type Language = 'en' | 'hi' | 'bn' | 'mr' | 'ta' | 'te';
@@ -164,14 +163,15 @@ interface ThemeProviderProps {
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setThemeState] = useState<Theme>('suit');
   const [language, setLanguageState] = useState<Language>('en');
-  const { profile, updateProfile } = useProfile();
 
   useEffect(() => {
-    if (profile) {
-      setThemeState(profile.ui_theme);
-      setLanguageState(profile.preferred_language as Language);
-    }
-  }, [profile]);
+    // Load theme and language from localStorage
+    const savedTheme = localStorage.getItem('biocog-theme') as Theme;
+    const savedLanguage = localStorage.getItem('biocog-language') as Language;
+    
+    if (savedTheme) setThemeState(savedTheme);
+    if (savedLanguage) setLanguageState(savedLanguage);
+  }, []);
 
   useEffect(() => {
     // Apply theme classes to document body
@@ -180,18 +180,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       : 'theme-suit bg-background';
   }, [theme]);
 
-  const setTheme = async (newTheme: Theme) => {
+  const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    if (profile) {
-      await updateProfile({ ui_theme: newTheme });
-    }
+    localStorage.setItem('biocog-theme', newTheme);
   };
 
-  const setLanguage = async (newLanguage: Language) => {
+  const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);
-    if (profile) {
-      await updateProfile({ preferred_language: newLanguage });
-    }
+    localStorage.setItem('biocog-language', newLanguage);
   };
 
   const value = {
