@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useProfile } from '@/hooks/useProfile';
-import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,136 +9,157 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Leaf, Users, Factory } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signIn, signUp, user } = useAuth();
-  const { createProfile } = useProfile();
-  const { translations } = useTheme();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
+  const [phone, setPhone] = useState('');
+  const [role, setRole] = useState<'trader' | 'manufacturer'>('trader');
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: 'trader' as 'trader' | 'manufacturer',
-    companyName: ''
-  });
+  const [resetEmail, setResetEmail] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   // Handle URL parameters for trial mode, plan selection, etc.
   useEffect(() => {
-    const mode = searchParams.get('mode');
-    const plan = searchParams.get('plan');
-    const role = searchParams.get('role');
-    
-    if (role && (role === 'trader' || role === 'manufacturer')) {
-      setFormData(prev => ({ ...prev, role }));
+    const urlRole = searchParams.get('role');
+    if (urlRole && (urlRole === 'trader' || urlRole === 'manufacturer')) {
+      setRole(urlRole);
     }
   }, [searchParams]);
 
-  const validateEmail = (email: string) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password: string) => {
+  const isValidPassword = (password: string) => {
     return password.length >= 6;
   };
 
   const handleSubmit = async (type: 'signin' | 'signup') => {
-    // Validation
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (!validateEmail(formData.email)) {
+    if (!isValidEmail(email)) {
       toast.error('Please enter a valid email address');
       return;
     }
 
-    if (!validatePassword(formData.password)) {
+    if (!isValidPassword(password)) {
       toast.error('Password must be at least 6 characters long');
       return;
     }
 
-    if (type === 'signup' && !formData.companyName.trim()) {
-      toast.error('Company name is required');
-      return;
+    if (type === 'signup') {
+      if (password !== confirmPassword) {
+        toast.error('Passwords do not match');
+        return;
+      }
+
+      if (!companyName.trim()) {
+        toast.error('Company name is required');
+        return;
+      }
+
+      if (!contactPerson.trim()) {
+        toast.error('Contact person name is required');
+        return;
+      }
     }
 
     setLoading(true);
+
     try {
-      if (type === 'signin') {
-        const { error } = await signIn(formData.email, formData.password);
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            toast.error('Invalid email or password. Please check your credentials.');
-          } else if (error.message.includes('Email not confirmed')) {
-            toast.error('Please check your email and click the confirmation link.');
-          } else {
-            toast.error(error.message);
-          }
-        } else {
-          toast.success('Successfully signed in!');
-          // Navigate based on role
-          const mode = searchParams.get('mode');
-          if (mode === 'trial') {
-            navigate('/trial');
-          } else {
-            navigate('/');
-          }
-        }
-      } else {
-        const { error } = await signUp(formData.email, formData.password, formData.role);
+      if (type === 'signup') {
+        const { error } = await signUp(email, password, role);
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('This email is already registered. Please sign in instead.');
           } else if (error.message.includes('Password should be at least 6 characters')) {
             toast.error('Password must be at least 6 characters long');
           } else {
-            toast.error(error.message);
+            toast.error(error.message || 'Failed to create account');
           }
         } else {
-          // Create profile after successful signup
-          setTimeout(async () => {
-            try {
-              await createProfile({
-                role: formData.role,
-                company_name: formData.companyName,
-                onboarding_completed: false,
-                ui_theme: 'suit',
-                preferred_language: 'en'
-              });
-            } catch (profileError) {
-              console.error('Profile creation error:', profileError);
-            }
-          }, 1000);
+          toast.success('Account created successfully! Redirecting to complete your profile...');
           
-          toast.success('Account created successfully! Please check your email to verify your account.');
-          
-          // Navigate based on URL parameters
+          // Handle URL parameters for specific flows
           const mode = searchParams.get('mode');
           const plan = searchParams.get('plan');
           
           if (mode === 'trial') {
             navigate('/trial');
           } else if (plan) {
-            navigate(`/trial?plan=${plan}`);
+            navigate(`/pricing?plan=${plan}`);
+          } else if (role === 'trader') {
+            navigate(`/onboarding-trader?company=${encodeURIComponent(companyName)}&contact=${encodeURIComponent(contactPerson)}&phone=${encodeURIComponent(phone)}`);
           } else {
-            navigate('/');
+            navigate(`/onboarding-manufacturer?company=${encodeURIComponent(companyName)}&contact=${encodeURIComponent(contactPerson)}&phone=${encodeURIComponent(phone)}`);
           }
         }
+      } else {
+        const { error } = await signIn(email, password);
+        if (error) {
+          if (error.message.includes('Invalid login credentials')) {
+            toast.error('Invalid email or password');
+          } else if (error.message.includes('Email not confirmed')) {
+            toast.error('Please confirm your email address before signing in');
+          } else {
+            toast.error(error.message || 'Failed to sign in');
+          }
+        } else {
+          toast.success('Signed in successfully!');
+          navigate('/dashboard');
+        }
       }
-    } catch (error: any) {
-      toast.error(error.message || 'An unexpected error occurred');
+    } catch (error) {
+      console.error('Auth error:', error);
+      toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  // Redirect if already authenticated
+  const handleForgotPassword = async () => {
+    if (!isValidEmail(resetEmail)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Password reset email sent! Check your inbox.');
+        setShowForgotPassword(false);
+        setResetEmail('');
+      }
+    } catch (error) {
+      console.error('Reset password error:', error);
+      toast.error('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (user) {
-    navigate('/');
     return null;
   }
 
@@ -153,7 +172,7 @@ const Auth = () => {
             <h1 className="text-3xl font-bold text-foreground">Biocog</h1>
           </div>
           <p className="text-muted-foreground">
-            {translations.welcome}
+            Sustainable Business Platform
           </p>
         </div>
 
@@ -161,63 +180,70 @@ const Auth = () => {
           <CardContent className="p-6">
             <Tabs defaultValue="signin">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">{translations.signIn}</TabsTrigger>
-                <TabsTrigger value="signup">{translations.signUp}</TabsTrigger>
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
               <TabsContent value="signin">
                 <CardHeader className="px-0">
-                  <CardTitle>{translations.signIn}</CardTitle>
+                  <CardTitle>Sign In</CardTitle>
                   <CardDescription>
                     Enter your credentials to access your account
                   </CardDescription>
                 </CardHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="signin-email">{translations.email}</Label>
+                <form onSubmit={(e) => { e.preventDefault(); handleSubmit('signin'); }} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email">Email</Label>
                     <Input
                       id="signin-email"
                       type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="signin-password">{translations.password}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password">Password</Label>
                     <Input
                       id="signin-password"
                       type="password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
                       required
                     />
                   </div>
-                  <Button 
-                    onClick={() => handleSubmit('signin')} 
-                    className="w-full"
-                    disabled={loading}
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? 'Signing in...' : 'Sign In'}
+                  </Button>
+                </form>
+
+                <div className="mt-4 text-center">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    {loading ? 'Signing in...' : translations.signIn}
+                    Forgot your password?
                   </Button>
                 </div>
               </TabsContent>
 
               <TabsContent value="signup">
                 <CardHeader className="px-0">
-                  <CardTitle>{translations.signUp}</CardTitle>
+                  <CardTitle>Sign Up</CardTitle>
                   <CardDescription>
                     Create your Biocog account
                   </CardDescription>
                 </CardHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="role">{translations.selectRole}</Label>
+                <form onSubmit={(e) => { e.preventDefault(); handleSubmit('signup'); }} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Select Role</Label>
                     <Select
-                      value={formData.role}
-                      onValueChange={(value: 'trader' | 'manufacturer') => 
-                        setFormData({ ...formData, role: value })
-                      }
+                      value={role}
+                      onValueChange={(value: 'trader' | 'manufacturer') => setRole(value)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -226,57 +252,141 @@ const Auth = () => {
                         <SelectItem value="trader">
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-2" />
-                            {translations.trader}
+                            Trader
                           </div>
                         </SelectItem>
                         <SelectItem value="manufacturer">
                           <div className="flex items-center">
                             <Factory className="h-4 w-4 mr-2" />
-                            {translations.manufacturer}
+                            Manufacturer
                           </div>
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="company-name">{translations.companyName}</Label>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Company Name</Label>
                     <Input
-                      id="company-name"
-                      value={formData.companyName}
-                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                      id="company"
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Enter your company name"
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="signup-email">{translations.email}</Label>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contact">Contact Person</Label>
+                    <Input
+                      id="contact"
+                      type="text"
+                      value={contactPerson}
+                      onChange={(e) => setContactPerson(e.target.value)}
+                      placeholder="Enter contact person name"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number (Optional)</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="signup-password">{translations.password}</Label>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Password</Label>
                     <Input
                       id="signup-password"
                       type="password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password (min 6 characters)"
                       required
                     />
                   </div>
-                  <Button 
-                    onClick={() => handleSubmit('signup')} 
-                    className="w-full"
-                    disabled={loading}
-                  >
-                    {loading ? 'Creating account...' : translations.signUp}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                      required
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? 'Creating account...' : 'Sign Up'}
                   </Button>
-                </div>
+                </form>
               </TabsContent>
             </Tabs>
+
+            {showForgotPassword && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle>Reset Password</CardTitle>
+                  <CardDescription>
+                    Enter your email address and we'll send you a link to reset your password.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-email">Email</Label>
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="Enter your email address"
+                        required
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleForgotPassword}
+                        disabled={loading}
+                        className="flex-1"
+                      >
+                        {loading ? 'Sending...' : 'Send Reset Link'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setResetEmail('');
+                        }}
+                        className="flex-1"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </CardContent>
         </Card>
       </div>

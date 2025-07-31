@@ -36,6 +36,8 @@ import Recyclers from "./pages/Recyclers";
 import ApiDocs from "./pages/ApiDocs";
 import Mobile from "./pages/Mobile";
 import Press from "./pages/Press";
+import Dashboard from "./pages/Dashboard";
+import AccountSettings from "./pages/AccountSettings";
 
 const queryClient = new QueryClient();
 
@@ -58,8 +60,10 @@ const App = () => (
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/security" element={<Security />} />
               <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/onboarding/trader" element={<OnboardingTrader />} />
-              <Route path="/onboarding/manufacturer" element={<OnboardingManufacturer />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/account-settings" element={<AccountSettings />} />
+              <Route path="/onboarding-trader" element={<OnboardingTrader />} />
+              <Route path="/onboarding-manufacturer" element={<OnboardingManufacturer />} />
               <Route path="/voice-demo" element={<VoiceDemo />} />
               <Route path="/carbon-tracker" element={<CarbonTracker />} />
               <Route path="/ewaste-recycling" element={<EWasteRecycling />} />
