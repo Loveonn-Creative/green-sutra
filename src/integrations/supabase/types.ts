@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_requests: {
+        Row: {
+          admin_notes: string | null
+          company_name: string | null
+          contact_person: string | null
+          id: string
+          phone: string | null
+          request_type: string
+          requested_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_email: string
+          user_id: string
+          user_role: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          id?: string
+          phone?: string | null
+          request_type?: string
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_email: string
+          user_id: string
+          user_role: string
+        }
+        Update: {
+          admin_notes?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          id?: string
+          phone?: string | null
+          request_type?: string
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_email?: string
+          user_id?: string
+          user_role?: string
+        }
+        Relationships: []
+      }
       carbon_credits: {
         Row: {
           created_at: string
@@ -83,6 +131,90 @@ export type Database = {
           transaction_hash?: string | null
           user_id?: string
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          admin_notes: string | null
+          company: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string
+          responded_at: string | null
+          status: string
+          subject: string
+          submitted_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          company?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          message: string
+          responded_at?: string | null
+          status?: string
+          subject: string
+          submitted_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          company?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string
+          responded_at?: string | null
+          status?: string
+          subject?: string
+          submitted_at?: string
+        }
+        Relationships: []
+      }
+      demo_requests: {
+        Row: {
+          admin_notes: string | null
+          company: string | null
+          email: string
+          id: string
+          interest: string | null
+          message: string | null
+          name: string
+          role: string | null
+          scheduled_at: string | null
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          company?: string | null
+          email: string
+          id?: string
+          interest?: string | null
+          message?: string | null
+          name: string
+          role?: string | null
+          scheduled_at?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          company?: string | null
+          email?: string
+          id?: string
+          interest?: string | null
+          message?: string | null
+          name?: string
+          role?: string | null
+          scheduled_at?: string | null
+          status?: string
+          submitted_at?: string
         }
         Relationships: []
       }
@@ -263,6 +395,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          approval_status: string | null
           city: string | null
           company_name: string | null
           contact_person: string | null
@@ -281,6 +414,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          approval_status?: string | null
           city?: string | null
           company_name?: string | null
           contact_person?: string | null
@@ -299,6 +433,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          approval_status?: string | null
           city?: string | null
           company_name?: string | null
           contact_person?: string | null
@@ -322,6 +457,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_carbon_credits_india: {
+        Args: {
+          energy_kwh?: number
+          fuel_liters?: number
+          waste_recycled_kg?: number
+          renewable_energy_percent?: number
+        }
+        Returns: number
+      }
+      calculate_green_cibil_score: {
+        Args: {
+          esg_score?: number
+          carbon_credits?: number
+          compliance_score?: number
+          waste_management_score?: number
+        }
+        Returns: number
+      }
       get_user_role: {
         Args: { user_uuid: string }
         Returns: string
