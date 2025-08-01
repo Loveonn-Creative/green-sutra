@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, User, Building, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Demo = () => {
   const [currentLanguage, setCurrentLanguage] = useState("en");
@@ -24,22 +25,68 @@ const Demo = () => {
   });
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Demo request submitted!",
-      description: "Our team will contact you within 24 hours to schedule your demo."
-    });
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      role: "",
-      interest: "",
-      message: ""
-    });
+    
+    if (!formData.name.trim() || !formData.email.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Save to database
+      const { error: dbError } = await supabase
+        .from('demo_requests')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || null,
+          role: formData.role || null,
+          interest: formData.interest || null,
+          message: formData.message || null
+        });
+
+      if (dbError) throw dbError;
+
+      // Send admin notification
+      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
+        body: {
+          type: 'demo_request',
+          data: formData
+        }
+      });
+
+      if (emailError) {
+        console.error("Email notification error:", emailError);
+      }
+
+      toast({
+        title: "Demo request submitted!",
+        description: "Our team will contact you within 24 hours to schedule your demo."
+      });
+      
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        role: "",
+        interest: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error("Error submitting demo request:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit demo request. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

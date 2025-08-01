@@ -1,11 +1,85 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    subject: "",
+    message: ""
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Save to database
+      const { error: dbError } = await supabase
+        .from('contact_submissions')
+        .insert({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          company: formData.company || null,
+          subject: formData.subject,
+          message: formData.message
+        });
+
+      if (dbError) throw dbError;
+
+      // Send admin notification
+      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
+        body: {
+          type: 'contact_form',
+          data: formData
+        }
+      });
+
+      if (emailError) {
+        console.error("Email notification error:", emailError);
+        // Don't fail the submission if email fails
+      }
+
+      toast.success("Message sent successfully! We'll get back to you within 24 hours.");
+      
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        company: "",
+        subject: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -48,45 +122,92 @@ const Contact = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="Enter your first name" />
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name *</Label>
+                          <Input 
+                            id="firstName" 
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            placeholder="Enter your first name" 
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name *</Label>
+                          <Input 
+                            id="lastName" 
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            placeholder="Enter your last name" 
+                            required
+                          />
+                        </div>
                       </div>
+                      
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Enter your last name" />
+                        <Label htmlFor="email">Email *</Label>
+                        <Input 
+                          id="email" 
+                          name="email"
+                          type="email" 
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="Enter your email" 
+                          required
+                        />
                       </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="Enter your email" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="company">Company (Optional)</Label>
-                      <Input id="company" placeholder="Enter your company name" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input id="subject" placeholder="What's this about?" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Tell us how we can help you..."
-                        className="min-h-32"
-                      />
-                    </div>
-                    
-                    <Button variant="hero" size="lg" className="w-full">
-                      Send Message
-                      <Send className="h-4 w-4 ml-2" />
-                    </Button>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="company">Company (Optional)</Label>
+                        <Input 
+                          id="company" 
+                          name="company"
+                          value={formData.company}
+                          onChange={handleInputChange}
+                          placeholder="Enter your company name" 
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="subject">Subject *</Label>
+                        <Input 
+                          id="subject" 
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleInputChange}
+                          placeholder="What's this about?" 
+                          required
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="message">Message *</Label>
+                        <Textarea 
+                          id="message" 
+                          name="message"
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          placeholder="Tell us how we can help you..."
+                          className="min-h-32"
+                          required
+                        />
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        variant="hero" 
+                        size="lg" 
+                        className="w-full"
+                        disabled={loading}
+                      >
+                        {loading ? "Sending..." : "Send Message"}
+                        <Send className="h-4 w-4 ml-2" />
+                      </Button>
+                    </form>
                   </CardContent>
                 </Card>
               </div>

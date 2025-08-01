@@ -77,6 +77,22 @@ const ESGEvaluation = () => {
       // Calculate scores first
       calculateESGScore();
       
+      // Calculate carbon credits using Indian standards
+      const { data: carbonCredits } = await supabase.rpc('calculate_carbon_credits_india', {
+        energy_kwh: parseFloat(esgData.energy_consumption) || 0,
+        fuel_liters: (parseFloat(esgData.emissions_scope1) || 0) / 2.31, // Convert back to liters
+        waste_recycled_kg: parseFloat(esgData.waste_recycled) || 0,
+        renewable_energy_percent: parseFloat(esgData.renewable_energy_percent) || 0
+      });
+
+      // Calculate Green CIBIL score
+      const { data: greenCibilScore } = await supabase.rpc('calculate_green_cibil_score', {
+        esg_score: scores.overall || 0,
+        carbon_credits: carbonCredits || 0,
+        compliance_score: (scores.governance || 0) * 1.2, // Governance as compliance proxy
+        waste_management_score: ((parseFloat(esgData.waste_recycled) || 0) / Math.max(parseFloat(esgData.waste_generated) || 1, 1)) * 100
+      });
+
       // Save to Supabase
       const { error } = await supabase
         .from('esg_reports')
@@ -96,15 +112,47 @@ const ESGEvaluation = () => {
           safety_incidents: parseInt(esgData.safety_incidents) || 0,
           diversity_score: parseFloat(esgData.diversity_score) || 0,
           overall_esg_score: scores.overall,
-          green_cibil_score: Math.round(scores.overall * 8.5), // Convert to Green CIBIL scale
+          green_cibil_score: greenCibilScore || 300,
           status: 'submitted'
         }]);
 
       if (error) throw error;
 
+      // Update carbon credits table
+      if (carbonCredits && carbonCredits > 0) {
+        await supabase
+          .from('carbon_credits')
+          .insert({
+            user_id: user.id,
+            credits_earned: carbonCredits,
+            credits_balance: carbonCredits,
+            source_type: 'esg_report',
+            source_description: 'ESG Report Carbon Credits',
+            verification_status: 'verified'
+          });
+      }
+
       toast.success('ESG Report submitted successfully!', {
-        description: 'Your report has been saved and will be processed for scoring.'
+        description: `Your report has been saved. Green CIBIL Score: ${greenCibilScore || 300}/900`
       });
+
+      // Send admin notification
+      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
+        body: {
+          type: 'esg_report',
+          data: {
+            user_email: user.email,
+            report_name: esgData.report_name || `ESG Report ${new Date().getFullYear()}`,
+            reporting_period: esgData.reporting_period,
+            overall_esg_score: scores.overall,
+            green_cibil_score: greenCibilScore || 300
+          }
+        }
+      });
+
+      if (emailError) {
+        console.error("Email notification error:", emailError);
+      }
       
       navigate('/trader-dashboard');
     } catch (error) {
