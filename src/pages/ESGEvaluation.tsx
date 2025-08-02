@@ -45,60 +45,92 @@ const ESGEvaluation = () => {
     governance: 0,
     overall: 0
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const calculateESGScore = () => {
-    // Simplified ESG scoring algorithm
-    const envScore = Math.min(100, 
+    if (!esgData.emissions_scope1 && !esgData.renewable_energy_percent && !esgData.employee_count) {
+      toast.error('Please fill in at least some data before calculating', {
+        description: 'Add basic information like emissions, renewable energy, or employee count'
+      });
+      return;
+    }
+
+    setIsCalculating(true);
+    
+    // Enhanced ESG scoring algorithm with validation
+    const envScore = Math.min(100, Math.max(0,
       (100 - (parseFloat(esgData.emissions_scope1) || 0) * 0.1) * 
-      (parseFloat(esgData.renewable_energy_percent) || 0) / 100
-    );
+      ((parseFloat(esgData.renewable_energy_percent) || 10) / 100) +
+      ((parseFloat(esgData.waste_recycled) || 0) / Math.max(parseFloat(esgData.waste_generated) || 1, 1)) * 20
+    ));
     
-    const socialScore = Math.min(100,
-      85 - (parseFloat(esgData.safety_incidents) || 0) * 5 + 
-      (parseFloat(esgData.diversity_score) || 0)
-    );
+    const socialScore = Math.min(100, Math.max(0,
+      75 - (parseFloat(esgData.safety_incidents) || 0) * 5 + 
+      (parseFloat(esgData.diversity_score) || 50) * 0.3
+    ));
     
-    const govScore = 75; // Base governance score
+    const govScore = esgData.report_name && esgData.reporting_period ? 85 : 65; // Governance based on reporting completeness
     
     const overall = (envScore + socialScore + govScore) / 3;
     
-    setScores({
-      environmental: Math.round(envScore),
-      social: Math.round(socialScore),
-      governance: Math.round(govScore),
-      overall: Math.round(overall)
-    });
+    setTimeout(() => {
+      setScores({
+        environmental: Math.round(envScore),
+        social: Math.round(socialScore),
+        governance: Math.round(govScore),
+        overall: Math.round(overall)
+      });
+      setIsCalculating(false);
+      toast.success('ESG Score calculated successfully!', {
+        description: `Your overall ESG score is ${Math.round(overall)}/100`
+      });
+    }, 1000);
   };
 
   const handleSubmit = async () => {
     if (!user) return;
     
+    // Validation
+    if (!esgData.report_name.trim()) {
+      toast.error('Please enter a report name');
+      return;
+    }
+
+    if (scores.overall === 0) {
+      toast.error('Please calculate ESG score first');
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Calculate scores first
-      calculateESGScore();
-      
       // Calculate carbon credits using Indian standards
-      const { data: carbonCredits } = await supabase.rpc('calculate_carbon_credits_india', {
+      const { data: carbonCredits, error: creditsError } = await supabase.rpc('calculate_carbon_credits_india', {
         energy_kwh: parseFloat(esgData.energy_consumption) || 0,
-        fuel_liters: (parseFloat(esgData.emissions_scope1) || 0) / 2.31, // Convert back to liters
+        fuel_liters: (parseFloat(esgData.emissions_scope1) || 0) / 2.31,
         waste_recycled_kg: parseFloat(esgData.waste_recycled) || 0,
         renewable_energy_percent: parseFloat(esgData.renewable_energy_percent) || 0
       });
 
+      if (creditsError) throw creditsError;
+
       // Calculate Green CIBIL score
-      const { data: greenCibilScore } = await supabase.rpc('calculate_green_cibil_score', {
-        esg_score: scores.overall || 0,
+      const { data: greenCibilScore, error: cibilError } = await supabase.rpc('calculate_green_cibil_score', {
+        esg_score: scores.overall,
         carbon_credits: carbonCredits || 0,
-        compliance_score: (scores.governance || 0) * 1.2, // Governance as compliance proxy
+        compliance_score: scores.governance * 1.2,
         waste_management_score: ((parseFloat(esgData.waste_recycled) || 0) / Math.max(parseFloat(esgData.waste_generated) || 1, 1)) * 100
       });
+
+      if (cibilError) throw cibilError;
 
       // Save to Supabase
       const { error } = await supabase
         .from('esg_reports')
         .insert([{
           user_id: user.id,
-          report_name: esgData.report_name || `ESG Report ${new Date().getFullYear()}`,
+          report_name: esgData.report_name,
           reporting_period: esgData.reporting_period,
           emissions_scope1: parseFloat(esgData.emissions_scope1) || 0,
           emissions_scope2: parseFloat(esgData.emissions_scope2) || 0,
@@ -127,39 +159,43 @@ const ESGEvaluation = () => {
             credits_earned: carbonCredits,
             credits_balance: carbonCredits,
             source_type: 'esg_report',
-            source_description: 'ESG Report Carbon Credits',
+            source_description: `Carbon Credits from ${esgData.report_name}`,
             verification_status: 'verified'
           });
       }
 
-      toast.success('ESG Report submitted successfully!', {
-        description: `Your report has been saved. Green CIBIL Score: ${greenCibilScore || 300}/900`
-      });
-
       // Send admin notification
-      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
-        body: {
-          type: 'esg_report',
-          data: {
-            user_email: user.email,
-            report_name: esgData.report_name || `ESG Report ${new Date().getFullYear()}`,
-            reporting_period: esgData.reporting_period,
-            overall_esg_score: scores.overall,
-            green_cibil_score: greenCibilScore || 300
+      try {
+        await supabase.functions.invoke('send-admin-notification', {
+          body: {
+            type: 'esg_report',
+            data: {
+              user_email: user.email,
+              report_name: esgData.report_name,
+              reporting_period: esgData.reporting_period,
+              overall_esg_score: scores.overall,
+              green_cibil_score: greenCibilScore || 300,
+              carbon_credits: carbonCredits || 0
+            }
           }
-        }
-      });
-
-      if (emailError) {
+        });
+      } catch (emailError) {
         console.error("Email notification error:", emailError);
+        // Don't fail submission if email fails
       }
+
+      toast.success('ESG Report submitted successfully!', {
+        description: `Report saved with Green CIBIL Score: ${greenCibilScore || 300}/900 and ${carbonCredits?.toFixed(2) || 0} carbon credits earned`
+      });
       
       navigate('/trader-dashboard');
     } catch (error) {
       console.error('Error submitting ESG report:', error);
       toast.error('Failed to submit ESG report', {
-        description: 'Please try again or contact support if the issue persists.'
+        description: error.message || 'Please try again or contact support.'
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -387,12 +423,21 @@ const ESGEvaluation = () => {
           </TabsContent>
         </Tabs>
 
-        <div className="flex gap-4 mt-8">
-          <Button onClick={calculateESGScore} variant="outline" className="flex-1">
-            Calculate ESG Score
+        <div className="flex flex-col sm:flex-row gap-4 mt-8">
+          <Button 
+            onClick={calculateESGScore} 
+            variant="outline" 
+            className="flex-1"
+            disabled={isCalculating}
+          >
+            {isCalculating ? "Calculating..." : "Calculate ESG Score"}
           </Button>
-          <Button onClick={handleSubmit} className="flex-1">
-            Submit ESG Report
+          <Button 
+            onClick={handleSubmit} 
+            className="flex-1"
+            disabled={loading || scores.overall === 0}
+          >
+            {loading ? "Submitting..." : "Submit ESG Report"}
           </Button>
         </div>
       </div>

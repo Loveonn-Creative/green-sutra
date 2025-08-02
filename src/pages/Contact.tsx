@@ -27,8 +27,21 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Enhanced validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
     if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (formData.message.trim().length < 10) {
+      toast.error("Please provide a more detailed message (at least 10 characters)");
       return;
     }
 
@@ -38,30 +51,33 @@ const Contact = () => {
       const { error: dbError } = await supabase
         .from('contact_submissions')
         .insert({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          company: formData.company || null,
-          subject: formData.subject,
-          message: formData.message
+          first_name: formData.firstName.trim(),
+          last_name: formData.lastName.trim(),
+          email: formData.email.trim().toLowerCase(),
+          company: formData.company?.trim() || null,
+          subject: formData.subject.trim(),
+          message: formData.message.trim()
         });
 
       if (dbError) throw dbError;
 
-      // Send admin notification
-      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
+      // Send admin notification - non-blocking
+      supabase.functions.invoke('send-admin-notification', {
         body: {
           type: 'contact_form',
-          data: formData
+          data: {
+            ...formData,
+            submitted_at: new Date().toISOString()
+          }
         }
+      }).catch(error => {
+        console.error("Email notification error:", error);
+        // Don't fail the submission if email fails
       });
 
-      if (emailError) {
-        console.error("Email notification error:", emailError);
-        // Don't fail the submission if email fails
-      }
-
-      toast.success("Message sent successfully! We'll get back to you within 24 hours.");
+      toast.success("Message sent successfully!", {
+        description: "We'll get back to you within 24 hours. Check your email for confirmation."
+      });
       
       // Reset form
       setFormData({
@@ -74,7 +90,9 @@ const Contact = () => {
       });
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Failed to send message", {
+        description: "Please try again or email us directly at hello@biocog.ai"
+      });
     } finally {
       setLoading(false);
     }

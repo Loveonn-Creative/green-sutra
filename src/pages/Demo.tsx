@@ -25,48 +25,74 @@ const Demo = () => {
   });
   const { toast } = useToast();
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
+    // Enhanced validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
+    
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.company.trim()) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Please fill in all required fields (Name, Email, Phone, Company)",
         variant: "destructive"
       });
       return;
     }
 
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!phoneRegex.test(formData.phone)) {
+      toast({
+        title: "Error", 
+        description: "Please enter a valid phone number",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
       // Save to database
       const { error: dbError } = await supabase
         .from('demo_requests')
         .insert({
-          name: formData.name,
-          email: formData.email,
-          company: formData.company || null,
+          name: formData.name.trim(),
+          email: formData.email.trim().toLowerCase(),
+          company: formData.company.trim(),
           role: formData.role || null,
           interest: formData.interest || null,
-          message: formData.message || null
+          message: formData.message?.trim() || null
         });
 
       if (dbError) throw dbError;
 
-      // Send admin notification
-      const { error: emailError } = await supabase.functions.invoke('send-admin-notification', {
+      // Send admin notification - non-blocking
+      supabase.functions.invoke('send-admin-notification', {
         body: {
           type: 'demo_request',
-          data: formData
+          data: {
+            ...formData,
+            submitted_at: new Date().toISOString()
+          }
         }
+      }).catch(error => {
+        console.error("Email notification error:", error);
       });
-
-      if (emailError) {
-        console.error("Email notification error:", emailError);
-      }
 
       toast({
         title: "Demo request submitted!",
-        description: "Our team will contact you within 24 hours to schedule your demo."
+        description: "Our team will contact you within 24 hours to schedule your personalized demo."
       });
       
       // Reset form
@@ -83,9 +109,11 @@ const Demo = () => {
       console.error("Error submitting demo request:", error);
       toast({
         title: "Error",
-        description: "Failed to submit demo request. Please try again.",
+        description: "Failed to submit demo request. Please try again or email us at demo@biocog.ai",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -201,8 +229,8 @@ const Demo = () => {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full">
-                    Request Demo
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Submitting..." : "Request Demo"}
                   </Button>
                 </form>
               </CardContent>

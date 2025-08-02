@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import ErrorBoundary from "./components/ui/error-boundary";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
@@ -38,18 +39,20 @@ import Mobile from "./pages/Mobile";
 import Press from "./pages/Press";
 import Dashboard from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
+import AdminDashboard from "./pages/AdminDashboard";
 import AuthGuard from "./components/auth/AuthGuard";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
@@ -104,6 +107,7 @@ const App = () => (
                 </AuthGuard>
               } />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/security" element={<Security />} />
               <Route path="/terms" element={<TermsOfService />} />
@@ -125,12 +129,13 @@ const App = () => (
               <Route path="/press" element={<Press />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

@@ -126,11 +126,21 @@ const VoiceDemo = () => {
       setTranscript("");
       setResponse("");
       setIsListening(true);
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Speech recognition error:', error);
+        setIsListening(false);
+        toast({
+          title: "Speech recognition failed",
+          description: "Please check your microphone permissions and try again.",
+          variant: "destructive"
+        });
+      }
     } else {
       toast({
         title: "Speech recognition not supported",
-        description: "Your browser doesn't support speech recognition.",
+        description: "Your browser doesn't support speech recognition. Please try Chrome or Edge.",
         variant: "destructive"
       });
     }
