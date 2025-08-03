@@ -152,8 +152,11 @@ const Features = ({ currentLanguage }: FeaturesProps) => {
   const currentContent = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <section id="features" className="py-20 bg-gradient-to-br from-nature-secondary/5 via-background to-nature-accent/5">
-      <div className="container px-4">
+    <section id="features" className="py-20 bg-gradient-to-br from-nature-secondary/5 via-background to-nature-accent/5 relative">
+      {/* Subtle pattern overlay */}
+      <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:40px_40px]" />
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-nature-primary/20 to-transparent" />
+      <div className="container px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {currentContent.title}

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, Shield, Leaf, TrendingUp, Mic } from "lucide-react";
-import VoiceInterface from "@/components/voice/VoiceInterface";
+import { ArrowRight, Zap, Shield, Leaf, TrendingUp, Mic, Rocket } from "lucide-react";
 
 interface HeroProps {
   currentLanguage: string;
@@ -95,13 +94,16 @@ const Hero = ({ currentLanguage }: HeroProps) => {
           </div>
 
           {/* Innovation showcase */}
-          <div className="pt-12 border-t border-border/50">
-            <div className="bg-accent/30 p-6 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold mb-2">🚀 Next-Gen Climate Innovation</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+          <div className="pt-12 border-t border-border/30">
+            <div className="bg-gradient-to-r from-nature-primary/10 via-accent/20 to-nature-accent/10 p-6 rounded-xl border border-nature-primary/20 shadow-soft mb-6 hover:shadow-nature transition-all duration-300">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Rocket className="h-5 w-5 text-nature-primary" />
+                <h3 className="text-lg font-semibold text-foreground">Next-Gen Climate Innovation</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                 Explore cutting-edge carbon intelligence and breakthrough climate technologies
               </p>
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="sm" className="border-nature-primary/40 hover:border-nature-primary hover:bg-nature-primary/5 transition-all duration-300" asChild>
                 <Link to="/carbon-intelligence">
                   Explore CINCS →
                 </Link>

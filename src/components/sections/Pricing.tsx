@@ -165,8 +165,12 @@ const Pricing = ({ currentLanguage }: PricingProps) => {
   const currentContent = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <section id="pricing" className="py-20 bg-gradient-to-br from-background via-nature-secondary/3 to-background">
-      <div className="container px-4">
+    <section id="pricing" className="py-20 bg-gradient-to-br from-background via-nature-secondary/3 to-background relative">
+      {/* Enhanced background elements */}
+      <div className="absolute inset-0 bg-grid-white/[0.015] bg-[size:60px_60px]" />
+      <div className="absolute top-20 right-10 w-32 h-32 bg-nature-accent/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 left-10 w-40 h-40 bg-nature-primary/5 rounded-full blur-3xl" />
+      <div className="container px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {currentContent.title}
