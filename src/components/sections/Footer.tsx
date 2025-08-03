@@ -28,7 +28,7 @@ const Footer = ({ currentLanguage }: FooterProps) => {
       links: {
         product: {
           title: "Product",
-          items: ["Features", "How it Works", "Pricing", "API Documentation", "Mobile App"]
+          items: ["Features", "How it Works", "Pricing", "API Documentation", "Mobile App", "Carbon Intelligence"]
         },
         company: {
           title: "Company", 
@@ -63,7 +63,7 @@ const Footer = ({ currentLanguage }: FooterProps) => {
       links: {
         product: {
           title: "उत्पाद",
-          items: ["सुविधाएं", "यह कैसे काम करता है", "मूल्य निर्धारण", "API डॉक्यूमेंटेशन", "मोबाइल ऐप"]
+          items: ["सुविधाएं", "यह कैसे काम करता है", "मूल्य निर्धारण", "API डॉक्यूमेंटेशन", "मोबाइल ऐप", "कार्बन इंटेलिजेंस"]
         },
         company: {
           title: "कंपनी",
@@ -189,6 +189,7 @@ const Footer = ({ currentLanguage }: FooterProps) => {
                         if (item === "Pricing" || item === "मूल्य निर्धारण") return "/#pricing";
                         if (item === "API Documentation" || item === "API डॉक्यूमेंटेशन") return "/api-docs";
                         if (item === "Mobile App" || item === "मोबाइल ऐप") return "/mobile";
+                        if (item === "Carbon Intelligence" || item === "कार्बन इंटेलिजेंस") return "/carbon-intelligence";
                         
                         // Company links
                         if (item === "About Us" || item === "हमारे बारे में") return "/about";

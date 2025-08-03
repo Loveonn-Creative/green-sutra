@@ -14,6 +14,7 @@ import TermsOfService from "./pages/TermsOfService";
 import OnboardingTrader from "./pages/OnboardingTrader";
 import OnboardingManufacturer from "./pages/OnboardingManufacturer";
 import VoiceDemo from "./pages/VoiceDemo";
+import CarbonIntelligence from "./pages/CarbonIntelligence";
 import CarbonTracker from "./pages/CarbonTracker";
 import EWasteRecycling from "./pages/EWasteRecycling";
 import ScanInvoice from "./pages/ScanInvoice";
@@ -112,6 +113,7 @@ const App = () => (
               <Route path="/security" element={<Security />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/voice-demo" element={<VoiceDemo />} />
+              <Route path="/carbon-intelligence" element={<CarbonIntelligence />} />
               <Route path="/scan-invoice" element={<ScanInvoice />} />
               <Route path="/about" element={<About />} />
               <Route path="/careers" element={<Careers />} />

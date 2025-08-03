@@ -88,8 +88,20 @@ const Hero = ({ currentLanguage }: HeroProps) => {
             </Button>
           </div>
 
-          {/* Trust indicators */}
+          {/* Innovation showcase */}
           <div className="pt-12 border-t border-border/50">
+            <div className="bg-accent/30 p-6 rounded-lg mb-6">
+              <h3 className="text-lg font-semibold mb-2">🚀 Next-Gen Climate Innovation</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Explore cutting-edge carbon intelligence and breakthrough climate technologies
+              </p>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/carbon-intelligence">
+                  Explore CINCS →
+                </Link>
+              </Button>
+            </div>
+            
             <p className="text-sm text-muted-foreground mb-6">Trusted by MSMEs across India</p>
             <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
               <div className="text-sm font-medium">BEE Certified</div>
