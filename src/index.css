@@ -19,11 +19,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 18%;
 
-    /* Primary Brand (Orange gradient inspired) */
-    --primary: 16 82% 55%;
-    --primary-light: 24 95% 65%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 16 82% 75%;
+    /* Primary Brand (Nature-inspired green) */
+    --primary: 142 76% 36%;
+    --primary-light: 142 76% 45%;
+    --primary-foreground: 120 40% 98%;
+    --primary-glow: 142 76% 50%;
+    
+    /* Nature palette */
+    --nature-primary: 142 76% 36%;
+    --nature-secondary: 95 38% 62%;
+    --nature-accent: 80 60% 50%;
 
     /* Secondary (Cool gray inspired) */
     --secondary: 220 13% 91%;
@@ -64,6 +69,8 @@
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-nature: linear-gradient(135deg, hsl(var(--nature-primary)), hsl(var(--nature-secondary)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--nature-secondary)) 50%, hsl(var(--nature-accent)) 100%);
     --gradient-brand: linear-gradient(135deg, hsl(220 13% 75%), hsl(var(--primary)));
     --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 50%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 13% 98%));
@@ -73,6 +80,8 @@
     --shadow-medium: 0 4px 6px -1px hsl(220 13% 18% / 0.1), 0 2px 4px -1px hsl(220 13% 18% / 0.06);
     --shadow-large: 0 10px 15px -3px hsl(220 13% 18% / 0.1), 0 4px 6px -2px hsl(220 13% 18% / 0.05);
     --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+    --shadow-nature: 0 20px 60px -15px hsl(var(--nature-primary) / 0.4);
+    --shadow-soft: 0 8px 32px -8px hsl(var(--nature-secondary) / 0.3);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

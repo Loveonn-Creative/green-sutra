@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, Shield, Leaf, TrendingUp } from "lucide-react";
+import { ArrowRight, Zap, Shield, Leaf, TrendingUp, Mic } from "lucide-react";
+import VoiceInterface from "@/components/voice/VoiceInterface";
 
 interface HeroProps {
   currentLanguage: string;
@@ -29,14 +30,16 @@ const Hero = ({ currentLanguage }: HeroProps) => {
   const currentContent = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-subtle" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-nature-secondary/10 to-nature-accent/10">
+      {/* Enhanced nature-inspired background */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
       
-      {/* Floating elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-32 right-16 w-40 h-40 bg-success/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-warning/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      {/* Enhanced floating elements with nature theme */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-nature opacity-20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-32 right-16 w-40 h-40 bg-nature-accent/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-nature-primary/20 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-10 right-1/4 w-3 h-3 bg-nature-primary rounded-full animate-ping" />
+      <div className="absolute bottom-1/4 left-1/4 w-2 h-2 bg-nature-accent rounded-full animate-ping delay-500" />
 
       <div className="container px-4 py-20 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -75,17 +78,33 @@ const Hero = ({ currentLanguage }: HeroProps) => {
             ))}
           </div>
 
-          {/* CTA buttons */}
+          {/* Enhanced CTA buttons with nature styling */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-            <Button variant="hero" size="xl" className="group" asChild>
+            <Button variant="hero" size="xl" className="group bg-gradient-nature hover:shadow-nature transition-all duration-300" asChild>
               <Link to="/auth">
                 {currentContent.cta}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
-            <Button variant="outline" size="xl" asChild>
+            <Button variant="outline" size="xl" className="border-nature-primary/40 hover:border-nature-primary hover:shadow-soft transition-all duration-300" asChild>
               <Link to="/voice-demo">{currentContent.tryDemo}</Link>
             </Button>
+          </div>
+
+          {/* Voice Interface Integration */}
+          <div className="mt-8 p-4 bg-background/60 backdrop-blur-sm rounded-2xl border border-nature-primary/20 shadow-soft max-w-md mx-auto">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Mic className="h-4 w-4 text-nature-primary" />
+              <span className="text-sm font-medium text-nature-primary">
+                {currentLanguage === 'hi' ? 'आवाज़ से बात करें' : 'Voice Enabled'}
+              </span>
+            </div>
+            <div className="scale-90">
+              <VoiceInterface 
+                language={currentLanguage}
+                onLanguageChange={() => {}}
+              />
+            </div>
           </div>
 
           {/* Innovation showcase */}
