@@ -32,10 +32,15 @@ import {
   TreePine,
   Mountain,
   Recycle,
-  Flame
+  Flame,
+  Search,
+  Eye,
+  MapPin,
+  Navigation
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import VoiceInterface from '@/components/voice/VoiceInterface';
 
 const CarbonIntelligence = () => {
   const { toast } = useToast();
@@ -51,6 +56,10 @@ const CarbonIntelligence = () => {
       description: "Advanced AI-powered carbon intelligence modules and breakthrough climate technologies in development",
       voiceDemo: "Voice Navigate Demo",
       seeInAction: "See It In Action",
+      requestDemo: "Request Demo",
+      solutions: "Solutions",
+      exploreIdeas: "Explore Ideas", 
+      satelliteVision: "Satellite Vision",
       languages: "Languages: English, Hindi (Others in development)",
       categories: "R&D & Ideation Zone – Under Development"
     },
@@ -60,6 +69,10 @@ const CarbonIntelligence = () => {
       description: "उन्नत AI-संचालित कार्बन इंटेलिजेंस मॉड्यूल और विकास में सफलता जलवायु प्रौद्योगिकियां",
       voiceDemo: "वॉयस नेविगेट डेमो",
       seeInAction: "इसे क्रिया में देखें",
+      requestDemo: "डेमो का अनुरोध करें",
+      solutions: "समाधान",
+      exploreIdeas: "आइडिया एक्सप्लोर करें",
+      satelliteVision: "सैटेलाइट विज़न",
       languages: "भाषाएं: अंग्रेजी, हिंदी (अन्य विकास में)",
       categories: "R&D और आइडिएशन ज़ोन - विकास के तहत"
     }
@@ -232,6 +245,23 @@ const CarbonIntelligence = () => {
     }
   ];
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleVoiceDemo = () => {
+    setIsVoiceActive(!isVoiceActive);
+    toast({
+      title: isVoiceActive ? "Voice Demo Stopped" : "Voice Demo Started",
+      description: isVoiceActive ? 
+        "Voice navigation disabled" : 
+        "Say 'Show me solutions', 'Explore satellite', or 'Request demo' in Hindi/English",
+    });
+  };
+
   const handleVoiceCommand = async () => {
     try {
       setIsListening(true);
@@ -262,62 +292,137 @@ const CarbonIntelligence = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header Section */}
-      <section className="bg-gradient-subtle py-20">
-        <div className="container px-4">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="space-y-4">
-              <Badge variant="outline" className="mb-4">
-                {currentContent.categories}
-              </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold">
-                <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  Carbon Intelligence
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground">
-                {currentContent.subtitle}
+      {/* Header Section with World-Class Navigation */}
+      <section className="relative bg-gradient-to-br from-success-light via-background to-accent/30 py-20 overflow-hidden">
+        {/* Nature-inspired background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 text-6xl">🌱</div>
+          <div className="absolute top-40 right-20 text-4xl">🌍</div>
+          <div className="absolute bottom-20 left-1/4 text-5xl">⚡</div>
+          <div className="absolute bottom-40 right-1/3 text-3xl">🛰️</div>
+        </div>
+        
+        <div className="container px-4 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Header with Navigation */}
+            <div className="text-center space-y-8 mb-16">
+              <div className="space-y-4">
+                <Badge variant="outline" className="mb-4 border-success/30 text-success bg-success-light/20">
+                  {currentContent.categories}
+                </Badge>
+                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                  <span className="bg-gradient-to-r from-success via-primary to-accent-foreground bg-clip-text text-transparent">
+                    Carbon Intelligence &
+                  </span>
+                  <br />
+                  <span className="text-foreground">Next-Gen Climate Solutions</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-muted-foreground font-medium">
+                  {currentContent.subtitle}
+                </p>
+              </div>
+              
+              <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                {currentContent.description}
               </p>
             </div>
-            
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              {currentContent.description}
-            </p>
 
-            {/* Language & Voice Controls */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-              <Button variant="hero" size="xl" className="group" asChild>
-                <Link to="/voice-demo">
-                  <Play className="h-5 w-5 mr-2" />
-                  {currentContent.seeInAction}
-                  <ChevronRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
-                </Link>
+            {/* World-Class Navigation Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+              <Button 
+                variant="default" 
+                size="lg" 
+                className="h-16 bg-success hover:bg-success/90 text-white group"
+                onClick={() => scrollToSection('core-modules')}
+              >
+                <Search className="h-5 w-5 mr-2" />
+                <div className="text-left">
+                  <div className="font-semibold">{currentContent.solutions}</div>
+                  <div className="text-xs opacity-90">Core Modules</div>
+                </div>
+                <ChevronRight className="h-4 w-4 ml-auto transition-transform group-hover:translate-x-1" />
               </Button>
-              
+
               <Button 
                 variant="outline" 
-                size="xl" 
-                onClick={handleVoiceCommand}
-                disabled={isListening}
+                size="lg" 
+                className="h-16 border-primary/20 hover:bg-primary/5 group"
+                onClick={() => handleVoiceDemo()}
               >
-                {isListening ? (
-                  <LoadingSpinner size="sm" />
-                ) : (
-                  <Mic className="h-5 w-5 mr-2" />
-                )}
-                {currentContent.voiceDemo}
+                <Mic className={`h-5 w-5 mr-2 ${isVoiceActive ? 'text-primary animate-pulse' : ''}`} />
+                <div className="text-left">
+                  <div className="font-semibold">{currentContent.requestDemo}</div>
+                  <div className="text-xs text-muted-foreground">Voice & AI</div>
+                </div>
+                <Play className="h-4 w-4 ml-auto" />
+              </Button>
+
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="h-16 border-accent-foreground/20 hover:bg-accent group"
+                onClick={() => scrollToSection('research-gallery')}
+              >
+                <Lightbulb className="h-5 w-5 mr-2 text-accent-foreground" />
+                <div className="text-left">
+                  <div className="font-semibold">{currentContent.exploreIdeas}</div>
+                  <div className="text-xs text-muted-foreground">Research & R&D</div>
+                </div>
+                <Eye className="h-4 w-4 ml-auto" />
+              </Button>
+
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="h-16 border-blue-200 hover:bg-blue-50 group"
+                onClick={() => {
+                  setActiveFilter('satellite');
+                  scrollToSection('research-gallery');
+                }}
+              >
+                <Satellite className="h-5 w-5 mr-2 text-blue-600" />
+                <div className="text-left">
+                  <div className="font-semibold">{currentContent.satelliteVision}</div>
+                  <div className="text-xs text-muted-foreground">Space-AI Tech</div>
+                </div>
+                <MapPin className="h-4 w-4 ml-auto" />
               </Button>
             </div>
 
-            <div className="text-sm text-muted-foreground">
-              {currentContent.languages}
+            {/* Voice & Language Support */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-8 border-t border-success/10">
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setSelectedLanguage(selectedLanguage === 'en' ? 'hi' : 'en')}
+                  className="text-sm"
+                >
+                  <Globe className="h-4 w-4 mr-2" />
+                  {selectedLanguage === 'en' ? 'हिंदी में देखें' : 'View in English'}
+                </Button>
+              </div>
+              
+              <div className="text-sm text-muted-foreground text-center">
+                {currentContent.languages}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Voice Interface Component */}
+      {isVoiceActive && (
+        <div className="fixed bottom-8 right-8 z-50">
+          <VoiceInterface 
+            onSpeakingChange={(speaking) => setIsListening(speaking)}
+            language={selectedLanguage}
+          />
+        </div>
+      )}
+
       {/* Core Modules Section */}
-      <section className="py-20">
+      <section id="core-modules" className="py-20">
         <div className="container px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -417,7 +522,7 @@ const CarbonIntelligence = () => {
       </section>
 
       {/* Research & Ideation Gallery */}
-      <section className="py-20">
+      <section id="research-gallery" className="py-20">
         <div className="container px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">

@@ -16,14 +16,19 @@ import {
 import LoadingSpinner from '@/components/ui/loading-spinner';
 
 interface VoiceInterfaceProps {
+  onSpeakingChange?: (speaking: boolean) => void;
   onLanguageChange?: (language: string) => void;
   currentLanguage?: string;
+  language?: string;
 }
 
 const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ 
+  onSpeakingChange,
   onLanguageChange, 
-  currentLanguage = 'en' 
+  currentLanguage = 'en',
+  language = 'en'
 }) => {
+  const activeLanguage = language || currentLanguage;
   const { toast } = useToast();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -56,7 +61,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
           bho: "हमार व्यापार खातिर कार्बन ट्रैकिंग के समाधान देखावs"
         };
         
-        setTranscript(mockTranscripts[currentLanguage as keyof typeof mockTranscripts] || mockTranscripts.en);
+        setTranscript(mockTranscripts[activeLanguage as keyof typeof mockTranscripts] || mockTranscripts.en);
         setIsListening(false);
         handleResponse();
       }, 2000);
@@ -73,6 +78,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
 
   const handleResponse = async () => {
     setIsSpeaking(true);
+    onSpeakingChange?.(true);
     
     // Mock AI response generation
     setTimeout(() => {
@@ -81,16 +87,17 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
         hi: "मैं आपके MSME के लिए कार्बन उत्सर्जन को ट्रैक करने में मदद कर सकता हूं। हमारा स्मार्ट कार्बन लेजर AI का उपयोग करके आपकी ऊर्जा खपत, ईंधन उपयोग और अपशिष्ट उत्पादन की रीयल-टाइम निगरानी करता है।",
         ta: "உங்கள் MSME க்கான கார்பன் உமிழ்வுகளைக் கண்காணிக்க நான் உதவ முடியும். எங்கள் ஸ்மார்ட் கார்பன் லெட்ஜர் AI ஐப் பயன்படுத்தி உங்கள் ஆற்றல் நுகர்வு, எரிபொருள் பயன்பாடு மற்றும் கழிவு உற்பத்தியை நிகழ்நேரத்தில் கண்காணிக்கிறது।",
         bn: "আমি আপনার MSME এর জন্য কার্বন নির্গমন ট্র্যাক করতে সাহায্য করতে পারি। আমাদের স্মার্ট কার্বন লেজার AI ব্যবহার করে আপনার শক্তি খরচ, জ্বালানি ব্যবহার এবং বর্জ্য উৎপাদন রিয়েল-টাইমে মনিটর করে।",
-        te: "మీ MSME కోసం కార్బన్ ఉద్గారాలను ట్రాక్ చేయడంలో నేను సహాయం చేయగలను। మా స్మార్ట్ కార్బన్ లెడ్జర్ AI ని ఉపయోగించి మీ శక్తి వినియోగం, ఇంధన వినియోగం మరియు వ్యర్థాల ఉత్పత్తిని రియల్ టైమ్‌లో పర్యవేక్షిస్తుంది।",
+        te: "మీ MSME కోసం కార్బన్ ఉద్గారాలను ట్రాక్ చేయడంలో నేను సహాయం చేయగలను. మా స్మార్ట్ కార్బన్ లెడ్జర్ AI ని ఉపయోగించి మీ శక్తి వినియోగం, ఇంధన వినియోగం మరియు వ్యర్థాల ఉత్పత్తిని రియల్ టైమ్‌లో పర్యవేక్షిస్తుంది।",
         bho: "हम आपके MSME खातिर कार्बन उत्सर्जन के ट्रैकिंग में मदद कर सकत बानी। हमार स्मार्ट कार्बन लेजर AI के इस्तेमाल से आपके ऊर्जा खपत, ईंधन के उपयोग आ कचरा के उत्पादन के रियल-टाइम निगरानी करेला।"
       };
       
-      setResponse(mockResponses[currentLanguage as keyof typeof mockResponses] || mockResponses.en);
+      setResponse(mockResponses[activeLanguage as keyof typeof mockResponses] || mockResponses.en);
       setIsSpeaking(false);
+      onSpeakingChange?.(false);
       
       toast({
         title: "AI Response Ready",
-        description: "Voice response generated in " + supportedLanguages.find(l => l.code === currentLanguage)?.name,
+        description: "Voice response generated in " + supportedLanguages.find(l => l.code === activeLanguage)?.name,
       });
     }, 3000);
   };
@@ -118,7 +125,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
             {supportedLanguages.map((lang) => (
               <Button
                 key={lang.code}
-                variant={currentLanguage === lang.code ? "default" : "outline"}
+                variant={activeLanguage === lang.code ? "default" : "outline"}
                 size="sm"
                 onClick={() => onLanguageChange?.(lang.code)}
                 className="flex items-center space-x-2"
@@ -145,7 +152,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
             <Brain className="h-5 w-5" />
             <span>AI Voice Assistant</span>
             <Badge variant="outline">
-              {supportedLanguages.find(l => l.code === currentLanguage)?.name}
+              {supportedLanguages.find(l => l.code === activeLanguage)?.name}
             </Badge>
           </CardTitle>
         </CardHeader>
