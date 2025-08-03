@@ -165,7 +165,7 @@ const Pricing = ({ currentLanguage }: PricingProps) => {
   const currentContent = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <section id="pricing" className="py-20 bg-background">
+    <section id="pricing" className="py-20 bg-gradient-to-br from-background via-nature-secondary/3 to-background">
       <div className="container px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">

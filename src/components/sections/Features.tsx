@@ -152,7 +152,7 @@ const Features = ({ currentLanguage }: FeaturesProps) => {
   const currentContent = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <section id="features" className="py-20 bg-gradient-subtle">
+    <section id="features" className="py-20 bg-gradient-to-br from-nature-secondary/5 via-background to-nature-accent/5">
       <div className="container px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">

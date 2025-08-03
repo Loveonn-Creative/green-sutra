@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   Upload, 
   Brain, 
@@ -184,7 +185,7 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
         </div>
 
         {/* Smart Onboarding Section */}
-        <div className="mt-20 pt-20 border-t border-border">
+        <div className="mt-20 pt-20 border-t border-border bg-gradient-subtle rounded-3xl p-8 md:p-12">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               {currentContent.onboarding.title}
@@ -196,15 +197,20 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {currentContent.onboarding.types.map((type, index) => (
-              <Card key={index} className="p-8 bg-card border-border hover:shadow-large transition-all duration-300 group cursor-pointer">
+              <Card key={index} className="p-8 bg-background/80 backdrop-blur-sm border-nature-primary/20 hover:shadow-nature transition-all duration-300 group cursor-pointer hover:border-nature-primary/40">
                 <div className="text-center space-y-6">
+                  <div className="w-16 h-16 mx-auto bg-gradient-nature rounded-full flex items-center justify-center mb-4">
+                    <span className="text-2xl font-bold text-primary-foreground">
+                      {index === 0 ? '📊' : '🏭'}
+                    </span>
+                  </div>
                   <h4 className="text-xl font-semibold text-foreground">
                     {type.title}
                   </h4>
                   <p className="text-muted-foreground">
                     {type.description}
                   </p>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {type.features.map((feature, idx) => (
                       <li key={idx} className="flex items-center justify-center space-x-2">
                         <CheckCircle className="h-4 w-4 text-success" />
@@ -212,9 +218,15 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
                       </li>
                     ))}
                   </ul>
-                  <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    Choose This Path
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                  <Button 
+                    variant="outline" 
+                    className="w-full group-hover:bg-gradient-nature group-hover:text-primary-foreground transition-all duration-300 border-nature-primary/30 hover:border-nature-primary"
+                    asChild
+                  >
+                    <Link to={index === 0 ? "/onboarding-trader" : "/onboarding-manufacturer"}>
+                      Choose This Path
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
                   </Button>
                 </div>
               </Card>
@@ -224,7 +236,7 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
 
         {/* Demo CTA */}
         <div className="mt-16 text-center">
-          <Card className="p-12 bg-gradient-brand border-border">
+          <Card className="p-12 bg-gradient-brand border-border shadow-glow">
             <div className="max-w-2xl mx-auto space-y-6">
               <h3 className="text-2xl md:text-3xl font-bold text-primary-foreground">
                 {currentContent.demo.title}
@@ -232,9 +244,16 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
               <p className="text-lg text-primary-foreground/80">
                 {currentContent.demo.subtitle}
               </p>
-              <Button variant="secondary" size="xl" className="bg-background text-foreground hover:bg-background/90">
-                {currentContent.demo.cta}
-                <ArrowRight className="h-5 w-5 ml-2" />
+              <Button 
+                variant="secondary" 
+                size="xl" 
+                className="bg-background text-foreground hover:bg-background/90 hover:shadow-soft transition-all duration-300"
+                asChild
+              >
+                <Link to="/demo">
+                  {currentContent.demo.cta}
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Link>
               </Button>
             </div>
           </Card>

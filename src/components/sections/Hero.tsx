@@ -86,25 +86,12 @@ const Hero = ({ currentLanguage }: HeroProps) => {
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
-            <Button variant="outline" size="xl" className="border-nature-primary/40 hover:border-nature-primary hover:shadow-soft transition-all duration-300" asChild>
-              <Link to="/voice-demo">{currentContent.tryDemo}</Link>
+            <Button variant="outline" size="xl" className="border-nature-primary/40 hover:border-nature-primary hover:shadow-soft transition-all duration-300 group" asChild>
+              <Link to="/voice-demo">
+                <Mic className="h-4 w-4 mr-2 text-nature-primary group-hover:text-nature-accent transition-colors" />
+                {currentContent.tryDemo}
+              </Link>
             </Button>
-          </div>
-
-          {/* Voice Interface Integration */}
-          <div className="mt-8 p-4 bg-background/60 backdrop-blur-sm rounded-2xl border border-nature-primary/20 shadow-soft max-w-md mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Mic className="h-4 w-4 text-nature-primary" />
-              <span className="text-sm font-medium text-nature-primary">
-                {currentLanguage === 'hi' ? 'आवाज़ से बात करें' : 'Voice Enabled'}
-              </span>
-            </div>
-            <div className="scale-90">
-              <VoiceInterface 
-                language={currentLanguage}
-                onLanguageChange={() => {}}
-              />
-            </div>
           </div>
 
           {/* Innovation showcase */}
