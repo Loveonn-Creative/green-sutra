@@ -7,7 +7,9 @@ import {
   FileOutput, 
   ArrowDown,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  BarChart3,
+  Factory
 } from "lucide-react";
 
 interface HowItWorksProps {
@@ -185,52 +187,61 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
         </div>
 
         {/* Smart Onboarding Section */}
-        <div className="mt-20 pt-20 border-t border-border bg-gradient-subtle rounded-3xl p-8 md:p-12">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              {currentContent.onboarding.title}
-            </h3>
-            <p className="text-lg text-muted-foreground">
-              {currentContent.onboarding.subtitle}
-            </p>
-          </div>
+        <div className="mt-20 pt-20 border-t border-border bg-gradient-to-br from-nature-primary/5 via-background to-nature-accent/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+          {/* Enhanced background elements */}
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:30px_30px]" />
+          <div className="absolute top-10 right-10 w-20 h-20 bg-nature-accent/10 rounded-full blur-2xl" />
+          <div className="absolute bottom-10 left-10 w-24 h-24 bg-nature-primary/10 rounded-full blur-2xl" />
+          
+          <div className="relative z-10">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                {currentContent.onboarding.title}
+              </h3>
+              <p className="text-lg text-muted-foreground">
+                {currentContent.onboarding.subtitle}
+              </p>
+            </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {currentContent.onboarding.types.map((type, index) => (
-              <Card key={index} className="p-8 bg-background/80 backdrop-blur-sm border-nature-primary/20 hover:shadow-nature transition-all duration-300 group cursor-pointer hover:border-nature-primary/40">
-                <div className="text-center space-y-6">
-                  <div className="w-16 h-16 mx-auto bg-gradient-nature rounded-full flex items-center justify-center mb-4">
-                    <span className="text-2xl font-bold text-primary-foreground">
-                      {index === 0 ? '📊' : '🏭'}
-                    </span>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {currentContent.onboarding.types.map((type, index) => (
+                <Card key={index} className="p-8 bg-background/90 backdrop-blur-sm border-nature-primary/30 hover:shadow-nature transition-all duration-300 group cursor-pointer hover:border-nature-primary/60 hover:bg-gradient-to-br hover:from-nature-primary/5 hover:to-nature-accent/5">
+                  <div className="text-center space-y-6">
+                    <div className="w-16 h-16 mx-auto bg-gradient-to-br from-nature-primary to-nature-accent rounded-full flex items-center justify-center mb-4 shadow-soft group-hover:shadow-nature transition-all duration-300">
+                      {index === 0 ? (
+                        <BarChart3 className="h-8 w-8 text-primary-foreground" />
+                      ) : (
+                        <Factory className="h-8 w-8 text-primary-foreground" />
+                      )}
+                    </div>
+                    <h4 className="text-xl font-semibold text-foreground">
+                      {type.title}
+                    </h4>
+                    <p className="text-muted-foreground">
+                      {type.description}
+                    </p>
+                    <ul className="space-y-3">
+                      {type.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-center justify-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-success" />
+                          <span className="text-sm text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button 
+                      variant="outline" 
+                      className="w-full group-hover:bg-gradient-to-r group-hover:from-nature-primary group-hover:to-nature-accent group-hover:text-primary-foreground transition-all duration-300 border-nature-primary/40 hover:border-nature-primary group-hover:border-transparent"
+                      asChild
+                    >
+                      <Link to={index === 0 ? "/onboarding-trader" : "/onboarding-manufacturer"}>
+                        Choose This Path
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Link>
+                    </Button>
                   </div>
-                  <h4 className="text-xl font-semibold text-foreground">
-                    {type.title}
-                  </h4>
-                  <p className="text-muted-foreground">
-                    {type.description}
-                  </p>
-                  <ul className="space-y-3">
-                    {type.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center justify-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-success" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    variant="outline" 
-                    className="w-full group-hover:bg-gradient-nature group-hover:text-primary-foreground transition-all duration-300 border-nature-primary/30 hover:border-nature-primary"
-                    asChild
-                  >
-                    <Link to={index === 0 ? "/onboarding-trader" : "/onboarding-manufacturer"}>
-                      Choose This Path
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
 

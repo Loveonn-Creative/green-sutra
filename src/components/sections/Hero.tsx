@@ -79,7 +79,7 @@ const Hero = ({ currentLanguage }: HeroProps) => {
 
           {/* Enhanced CTA buttons with nature styling */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-            <Button variant="hero" size="xl" className="group bg-gradient-nature hover:shadow-nature transition-all duration-300" asChild>
+            <Button variant="hero" size="xl" className="group" asChild>
               <Link to="/auth">
                 {currentContent.cta}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
