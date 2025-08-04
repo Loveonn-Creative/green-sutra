@@ -151,7 +151,7 @@ const EnhancedAuth = () => {
 
     setLoading(true);
     try {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, role);
 
       if (error) {
         if (error.message.includes('already registered')) {
