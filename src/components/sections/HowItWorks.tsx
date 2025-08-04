@@ -186,61 +186,131 @@ const HowItWorks = ({ currentLanguage }: HowItWorksProps) => {
           })}
         </div>
 
-        {/* Smart Onboarding Section */}
-        <div className="mt-20 pt-20 border-t border-border bg-gradient-to-br from-nature-primary/5 via-background to-nature-accent/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
-          {/* Enhanced background elements */}
-          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:30px_30px]" />
-          <div className="absolute top-10 right-10 w-20 h-20 bg-nature-accent/10 rounded-full blur-2xl" />
-          <div className="absolute bottom-10 left-10 w-24 h-24 bg-nature-primary/10 rounded-full blur-2xl" />
+        {/* Smart Onboarding Section - Completely Redesigned */}
+        <div className="mt-32 relative overflow-hidden">
+          {/* Premium Background with Multiple Layers */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-primary/3 to-transparent" />
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl opacity-40" />
+          <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-gradient-to-tl from-accent/20 to-transparent rounded-full blur-3xl opacity-40" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
           
-          <div className="relative z-10">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                {currentContent.onboarding.title}
+          <div className="relative z-10 py-24 px-8">
+            {/* World-Class Header */}
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-primary uppercase tracking-wider">
+                  Intelligent Onboarding
+                </span>
+                <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+              </div>
+              
+              <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+                <span className="bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                  {currentContent.onboarding.title}
+                </span>
               </h3>
-              <p className="text-lg text-muted-foreground">
+              
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
                 {currentContent.onboarding.subtitle}
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {currentContent.onboarding.types.map((type, index) => (
-                <Card key={index} className="p-8 bg-background/90 backdrop-blur-sm border-nature-primary/30 hover:shadow-nature transition-all duration-300 group cursor-pointer hover:border-nature-primary/60 hover:bg-gradient-to-br hover:from-nature-primary/5 hover:to-nature-accent/5">
-                  <div className="text-center space-y-6">
-                    <div className="w-16 h-16 mx-auto bg-gradient-to-br from-nature-primary to-nature-accent rounded-full flex items-center justify-center mb-4 shadow-soft group-hover:shadow-nature transition-all duration-300">
-                      {index === 0 ? (
-                        <BarChart3 className="h-8 w-8 text-primary-foreground" />
-                      ) : (
-                        <Factory className="h-8 w-8 text-primary-foreground" />
-                      )}
-                    </div>
-                    <h4 className="text-xl font-semibold text-foreground">
-                      {type.title}
-                    </h4>
-                    <p className="text-muted-foreground">
-                      {type.description}
-                    </p>
-                    <ul className="space-y-3">
-                      {type.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center justify-center space-x-2">
-                          <CheckCircle className="h-4 w-4 text-success" />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      variant="outline" 
-                      className="w-full group-hover:bg-gradient-to-r group-hover:from-nature-primary group-hover:to-nature-accent group-hover:text-primary-foreground transition-all duration-300 border-nature-primary/40 hover:border-nature-primary group-hover:border-transparent"
-                      asChild
-                    >
-                      <Link to={index === 0 ? "/onboarding-trader" : "/onboarding-manufacturer"}>
-                        Choose This Path
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Link>
-                    </Button>
+            {/* Revolutionary Card Design */}
+            <div className="max-w-6xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12">
+                {currentContent.onboarding.types.map((type, index) => (
+                  <div key={index} className="group relative">
+                    {/* Glow Effect Background */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    
+                    <Card className="relative bg-card/40 backdrop-blur-2xl border-0 overflow-hidden group-hover:bg-card/60 transition-all duration-700 hover:scale-105">
+                      {/* Card Background Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background/50 to-accent/5 opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                      
+                      {/* Animated Border */}
+                      <div className="absolute inset-[1px] bg-gradient-to-br from-background/80 to-background/40 rounded-2xl" />
+                      
+                      <div className="relative z-10 p-10">
+                        <div className="text-center space-y-8">
+                          {/* Enhanced Icon with Multiple Effects */}
+                          <div className="relative mx-auto w-24 h-24">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-2xl shadow-2xl group-hover:shadow-primary/50 transition-all duration-500 group-hover:scale-110" />
+                            <div className="absolute inset-[2px] bg-gradient-to-br from-background/20 to-transparent rounded-2xl" />
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              {index === 0 ? (
+                                <BarChart3 className="h-12 w-12 text-primary-foreground" />
+                              ) : (
+                                <Factory className="h-12 w-12 text-primary-foreground" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Content */}
+                          <div className="space-y-6">
+                            <h4 className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+                              {type.title}
+                            </h4>
+                            <p className="text-lg text-muted-foreground leading-relaxed">
+                              {type.description}
+                            </p>
+                          </div>
+                          
+                          {/* Enhanced Features List */}
+                          <div className="space-y-4">
+                            {type.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-center justify-center gap-3 p-3 rounded-xl bg-background/50 backdrop-blur-sm group-hover:bg-primary/5 transition-all duration-300">
+                                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+                                  <CheckCircle className="h-4 w-4 text-primary-foreground" />
+                                </div>
+                                <span className="text-base font-medium text-foreground">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Premium CTA Button */}
+                          <div className="pt-6">
+                            <Button 
+                              asChild
+                              className="w-full h-14 bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary hover:to-accent text-primary hover:text-primary-foreground border border-primary/20 hover:border-transparent transition-all duration-500 text-lg font-semibold group/btn shadow-lg hover:shadow-xl"
+                            >
+                              <Link to={index === 0 ? "/auth?role=trader" : "/auth?role=manufacturer"}>
+                                <span className="flex items-center justify-center gap-3">
+                                  Choose This Path
+                                  <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                                </span>
+                              </Link>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
                   </div>
-                </Card>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Enhanced Bottom CTA */}
+            <div className="text-center mt-20">
+              <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-3xl p-8 backdrop-blur-sm border border-primary/20">
+                <p className="text-lg text-muted-foreground mb-6">
+                  Need guidance choosing the right path?
+                </p>
+                <Button 
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="bg-background/80 hover:bg-primary hover:text-primary-foreground border-primary/30 hover:border-primary px-8 py-3 text-lg"
+                >
+                  <Link to="/demo">
+                    <span className="flex items-center gap-2">
+                      Explore Demo First
+                      <ArrowRight className="w-5 h-5" />
+                    </span>
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

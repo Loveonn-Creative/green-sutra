@@ -95,6 +95,39 @@ export type Database = {
         }
         Relationships: []
       }
+      carbon_calculations: {
+        Row: {
+          calculation_date: string
+          calculation_type: string
+          carbon_credits_earned: number
+          carbon_saved: number
+          created_at: string
+          id: string
+          input_data: Json
+          user_id: string
+        }
+        Insert: {
+          calculation_date?: string
+          calculation_type: string
+          carbon_credits_earned?: number
+          carbon_saved?: number
+          created_at?: string
+          id?: string
+          input_data: Json
+          user_id: string
+        }
+        Update: {
+          calculation_date?: string
+          calculation_type?: string
+          carbon_credits_earned?: number
+          carbon_saved?: number
+          created_at?: string
+          id?: string
+          input_data?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       carbon_credits: {
         Row: {
           created_at: string
@@ -332,6 +365,33 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_surveys: {
+        Row: {
+          ai_recommendations: Json | null
+          id: string
+          responses: Json
+          submitted_at: string
+          survey_type: string
+          user_id: string
+        }
+        Insert: {
+          ai_recommendations?: Json | null
+          id?: string
+          responses: Json
+          submitted_at?: string
+          survey_type: string
+          user_id: string
+        }
+        Update: {
+          ai_recommendations?: Json | null
+          id?: string
+          responses?: Json
+          submitted_at?: string
+          survey_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mandi_listings: {
         Row: {
           carbon_efficiency_score: number
@@ -392,6 +452,81 @@ export type Database = {
         }
         Relationships: []
       }
+      otp_verifications: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          otp_code: string
+          phone: string
+          user_id: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          otp_code: string
+          phone: string
+          user_id?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_code?: string
+          phone?: string
+          user_id?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      pickup_schedules: {
+        Row: {
+          address: string
+          contact_phone: string
+          created_at: string
+          id: string
+          items_description: string | null
+          pickup_type: string
+          scheduled_date: string
+          scheduled_time: string | null
+          special_instructions: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          contact_phone: string
+          created_at?: string
+          id?: string
+          items_description?: string | null
+          pickup_type: string
+          scheduled_date: string
+          scheduled_time?: string | null
+          special_instructions?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          items_description?: string | null
+          pickup_type?: string
+          scheduled_date?: string
+          scheduled_time?: string | null
+          special_instructions?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -402,12 +537,18 @@ export type Database = {
           created_at: string
           gst_number: string | null
           id: string
+          last_login_at: string | null
           onboarding_completed: boolean | null
+          onboarding_step: number | null
           phone: string | null
+          phone_verified: boolean | null
           pincode: string | null
           preferred_language: string | null
+          regional_language: string | null
           role: string
           state: string | null
+          total_carbon_saved: number | null
+          total_credits_earned: number | null
           ui_theme: string | null
           updated_at: string
           user_id: string
@@ -421,12 +562,18 @@ export type Database = {
           created_at?: string
           gst_number?: string | null
           id?: string
+          last_login_at?: string | null
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
+          phone_verified?: boolean | null
           pincode?: string | null
           preferred_language?: string | null
+          regional_language?: string | null
           role: string
           state?: string | null
+          total_carbon_saved?: number | null
+          total_credits_earned?: number | null
           ui_theme?: string | null
           updated_at?: string
           user_id: string
@@ -440,13 +587,55 @@ export type Database = {
           created_at?: string
           gst_number?: string | null
           id?: string
+          last_login_at?: string | null
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
+          phone_verified?: boolean | null
           pincode?: string | null
           preferred_language?: string | null
+          regional_language?: string | null
           role?: string
           state?: string | null
+          total_carbon_saved?: number | null
+          total_credits_earned?: number | null
           ui_theme?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          priority: string
+          resolved_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject?: string
           updated_at?: string
           user_id?: string
         }
