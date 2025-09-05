@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { GuestAccessProvider } from "./hooks/useGuestAccess";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ErrorBoundary from "./components/ui/error-boundary";
 import Index from "./pages/Index";
@@ -49,7 +50,8 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider>
+        <GuestAccessProvider>
+          <ThemeProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -57,31 +59,11 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/esg-evaluation" element={
-                <AuthGuard>
-                  <ESGEvaluation />
-                </AuthGuard>
-              } />
-              <Route path="/trader-dashboard" element={
-                <AuthGuard requireRole="trader">
-                  <TraderDashboard />
-                </AuthGuard>
-              } />
-              <Route path="/manufacturer-dashboard" element={
-                <AuthGuard requireRole="manufacturer">
-                  <ManufacturerDashboard />
-                </AuthGuard>
-              } />
-              <Route path="/ai-mandi" element={
-                <AuthGuard>
-                  <AIMandi />
-                </AuthGuard>
-              } />
-              <Route path="/credits" element={
-                <AuthGuard>
-                  <Credits />
-                </AuthGuard>
-              } />
+              <Route path="/esg-evaluation" element={<ESGEvaluation />} />
+              <Route path="/trader-dashboard" element={<TraderDashboard />} />
+              <Route path="/manufacturer-dashboard" element={<ManufacturerDashboard />} />
+              <Route path="/ai-mandi" element={<AIMandi />} />
+              <Route path="/credits" element={<Credits />} />
               <Route path="/account-settings" element={
                 <AuthGuard>
                   <AccountSettings />
@@ -97,16 +79,8 @@ const App = () => (
                   <OnboardingManufacturer />
                 </AuthGuard>
               } />
-              <Route path="/carbon-tracker" element={
-                <AuthGuard>
-                  <CarbonTracker />
-                </AuthGuard>
-              } />
-              <Route path="/ewaste-recycling" element={
-                <AuthGuard>
-                  <EWasteRecycling />
-                </AuthGuard>
-              } />
+              <Route path="/carbon-tracker" element={<CarbonTracker />} />
+              <Route path="/ewaste-recycling" element={<EWasteRecycling />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/help-center" element={<HelpCenter />} />
@@ -135,6 +109,7 @@ const App = () => (
             </BrowserRouter>
           </TooltipProvider>
         </ThemeProvider>
+        </GuestAccessProvider>
       </AuthProvider>
     </QueryClientProvider>
   </ErrorBoundary>

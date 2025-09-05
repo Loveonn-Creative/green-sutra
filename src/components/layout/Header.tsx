@@ -113,6 +113,11 @@ const Header = ({ currentLanguage, onLanguageChange, showDashboardNav = false }:
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Guest Access Button */}
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/ai-mandi">Guest Access</Link>
+          </Button>
+
           {/* User Menu or Auth Buttons */}
           {user ? (
             <DropdownMenu>
