@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -17,6 +18,7 @@ import Footer from '@/components/sections/Footer';
 const ESGEvaluation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage, translations } = useTheme();
   const [esgData, setEsgData] = useState({
     // Environmental
@@ -199,7 +201,7 @@ const ESGEvaluation = () => {
     }
   };
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     navigate('/auth');
     return null;
   }

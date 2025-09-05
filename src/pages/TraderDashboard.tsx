@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ import Footer from '@/components/sections/Footer';
 const TraderDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage, translations } = useTheme();
 
   // Mock data - in real app, this would come from Supabase
@@ -47,7 +49,7 @@ const TraderDashboard = () => {
     ]
   };
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     navigate('/auth');
     return null;
   }

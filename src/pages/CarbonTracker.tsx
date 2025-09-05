@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from "@/components/layout/Header";
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 const CarbonTracker = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage } = useTheme();
   const [esgReports, setEsgReports] = useState([]);
   const [carbonCredits, setCarbonCredits] = useState([]);
@@ -69,7 +71,7 @@ const CarbonTracker = () => {
     navigate('/esg-evaluation');
   };
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     navigate('/auth');
     return null;
   }

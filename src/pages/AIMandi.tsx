@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useProfile } from '@/hooks/useProfile';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ const AIMandi = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile } = useProfile();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage } = useTheme();
   const [listings, setListings] = useState<MandiListing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,12 +46,12 @@ const AIMandi = () => {
   const [locationFilter, setLocationFilter] = useState('all');
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !isGuestMode) {
       navigate('/auth');
       return;
     }
     fetchListings();
-  }, [user, navigate]);
+  }, [user, isGuestMode, navigate]);
 
   const fetchListings = async () => {
     try {
@@ -86,7 +88,7 @@ const AIMandi = () => {
   const categories = [...new Set(listings.map(l => l.product_category))];
   const states = [...new Set(listings.map(l => l.location_state))];
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     return null;
   }
 

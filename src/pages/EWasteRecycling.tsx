@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from "@/components/layout/Header";
@@ -15,6 +16,7 @@ import { toast } from "sonner";
 const EWasteRecycling = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage } = useTheme();
   const [ewasteRecords, setEwasteRecords] = useState([]);
   const [carbonCredits, setCarbonCredits] = useState(0);
@@ -117,7 +119,7 @@ const EWasteRecycling = () => {
     navigate('/credits');
   };
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     navigate('/auth');
     return null;
   }
