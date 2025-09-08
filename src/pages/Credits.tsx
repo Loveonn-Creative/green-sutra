@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useGuestAccess } from '@/hooks/useGuestAccess';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,18 +27,47 @@ const Credits = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile } = useProfile();
+  const { isGuestMode } = useGuestAccess();
   const { language, setLanguage } = useTheme();
   const [credits, setCredits] = useState<CarbonCredit[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalBalance, setTotalBalance] = useState(0);
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !isGuestMode) {
       navigate('/auth');
       return;
     }
-    fetchCredits();
-  }, [user, navigate]);
+    if (user) {
+      fetchCredits();
+    } else if (isGuestMode) {
+      // Mock data for guest users
+      setCredits([
+        {
+          id: 'demo-1',
+          credits_earned: 150,
+          credits_redeemed: 0,
+          credits_balance: 150,
+          source_type: 'e-waste_recycling',
+          source_description: 'Demo: E-waste recycling submission',
+          verification_status: 'verified',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'demo-2',
+          credits_earned: 200,
+          credits_redeemed: 50,
+          credits_balance: 150,
+          source_type: 'esg_report',
+          source_description: 'Demo: ESG Report submission',
+          verification_status: 'verified',
+          created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ]);
+      setTotalBalance(300);
+      setLoading(false);
+    }
+  }, [user, isGuestMode, navigate]);
 
   const fetchCredits = async () => {
     if (!user) return;
@@ -68,7 +98,7 @@ const Credits = () => {
     }
   };
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     return null;
   }
 

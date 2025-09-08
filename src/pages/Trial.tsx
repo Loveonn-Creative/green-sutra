@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useGuestAccess } from "@/hooks/useGuestAccess";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/sections/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +26,7 @@ const Trial = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isGuestMode } = useGuestAccess();
   const { toast } = useToast();
   
   const selectedPlan = searchParams.get("plan") || "trial";
@@ -40,11 +42,11 @@ const Trial = () => {
   });
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !isGuestMode) {
       navigate("/auth?mode=trial");
       return;
     }
-  }, [user, navigate]);
+  }, [user, isGuestMode, navigate]);
 
   const handleUpgrade = () => {
     navigate(`/auth?plan=${selectedPlan}`);
@@ -77,7 +79,7 @@ const Trial = () => {
     }
   ];
 
-  if (!user) {
+  if (!user && !isGuestMode) {
     return null;
   }
 
