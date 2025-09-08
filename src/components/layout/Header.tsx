@@ -6,6 +6,7 @@ import { Menu, X, Globe, User, Settings, LogOut, LayoutDashboard } from "lucide-
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { useGuestAccess } from "@/hooks/useGuestAccess";
 
 interface HeaderProps {
   currentLanguage: string;
@@ -17,6 +18,7 @@ const Header = ({ currentLanguage, onLanguageChange, showDashboardNav = false }:
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
+  const { enableGuestMode } = useGuestAccess();
   const navigate = useNavigate();
 
   const languages = [
@@ -30,6 +32,11 @@ const Header = ({ currentLanguage, onLanguageChange, showDashboardNav = false }:
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleGuestAccess = () => {
+    enableGuestMode();
+    navigate('/ai-mandi');
   };
 
   return (
@@ -114,8 +121,8 @@ const Header = ({ currentLanguage, onLanguageChange, showDashboardNav = false }:
           </DropdownMenu>
 
           {/* Guest Access Button */}
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/ai-mandi">Guest Access</Link>
+          <Button variant="outline" size="sm" onClick={handleGuestAccess}>
+            Guest Access
           </Button>
 
           {/* User Menu or Auth Buttons */}
@@ -273,6 +280,9 @@ const Header = ({ currentLanguage, onLanguageChange, showDashboardNav = false }:
             </nav>
             <div className="pt-4 border-t border-border space-y-3">
               <div className="space-y-2">
+                <Button variant="outline" size="sm" className="w-full" onClick={handleGuestAccess}>
+                  Guest Access
+                </Button>
                 <Button variant="outline" size="sm" className="w-full" asChild>
                   <Link to="/auth">Sign In</Link>
                 </Button>
