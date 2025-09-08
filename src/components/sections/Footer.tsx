@@ -28,7 +28,7 @@ const Footer = ({ currentLanguage }: FooterProps) => {
       links: {
         product: {
           title: "Product",
-          items: ["Features", "How it Works", "Pricing", "API Documentation", "Mobile App", "Carbon Intelligence"]
+          items: ["Features", "How it Works", "Pricing", "AI Mandi", "Carbon Tracker", "ESG Evaluation", "E-waste Recycling", "Credits", "Trial", "API Documentation", "Mobile App", "Carbon Intelligence"]
         },
         company: {
           title: "Company", 
@@ -63,7 +63,7 @@ const Footer = ({ currentLanguage }: FooterProps) => {
       links: {
         product: {
           title: "उत्पाद",
-          items: ["सुविधाएं", "यह कैसे काम करता है", "मूल्य निर्धारण", "API डॉक्यूमेंटेशन", "मोबाइल ऐप", "कार्बन इंटेलिजेंस"]
+          items: ["सुविधाएं", "यह कैसे काम करता है", "मूल्य निर्धारण", "AI मंडी", "कार्बन ट्रैकर", "ESG मूल्यांकन", "ई-वेस्ट रीसाइक्लिंग", "क्रेडिट", "ट्रायल", "API डॉक्यूमेंटेशन", "मोबाइल ऐप", "कार्बन इंटेलिजेंस"]
         },
         company: {
           title: "कंपनी",
@@ -187,6 +187,12 @@ const Footer = ({ currentLanguage }: FooterProps) => {
                         if (item === "Features" || item === "सुविधाएं") return "/#features";
                         if (item === "How it Works" || item === "यह कैसे काम करता है") return "/#how-it-works";
                         if (item === "Pricing" || item === "मूल्य निर्धारण") return "/#pricing";
+                        if (item === "AI Mandi" || item === "AI मंडी") return "/ai-mandi";
+                        if (item === "Carbon Tracker" || item === "कार्बन ट्रैकर") return "/carbon-tracker";
+                        if (item === "ESG Evaluation" || item === "ESG मूल्यांकन") return "/esg-evaluation";
+                        if (item === "E-waste Recycling" || item === "ई-वेस्ट रीसाइक्लिंग") return "/ewaste-recycling";
+                        if (item === "Credits" || item === "क्रेडिट") return "/credits";
+                        if (item === "Trial" || item === "ट्रायल") return "/trial";
                         if (item === "API Documentation" || item === "API डॉक्यूमेंटेशन") return "/api-docs";
                         if (item === "Mobile App" || item === "मोबाइल ऐप") return "/mobile";
                         if (item === "Carbon Intelligence" || item === "कार्बन इंटेलिजेंस") return "/carbon-intelligence";
